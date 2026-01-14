@@ -13,19 +13,14 @@ const CONFIG = {
   HOST: process.env.HOST || "http://localhost:5001",
   PORT: process.env.PORT || 5001,
   PRODUCTION: process.env.NODE_ENV === "production",
-  // CLIENT_URL: process.env.CLIENT_URL || "https://chicandholland.com",
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
-  // DB_SYNC: true,
-  DB_URL:
-    // process.env.DB_URL || "mysql://root:root@192.168.1.200:3306/chickholland",
-    process.env.DB_URL ||
-    "mysql://root:@localhost:3306/chicandholland",
+  // Updated to 127.0.0.1 for more stable connection on Ubuntu
+  DB_URL: process.env.DB_URL || "mysql://root:jaikvik@127.0.0.1:3306/chickholland",
   DB_POOL_SIZE: 10,
   JWT_SECRET: process.env.JWT_SECRET || "krishna_chicandholland",
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1d",
   JWT_ISSUER: process.env.JWT_ISSUER || "krishna_chicandholland",
-  SALT_ROUNDS: process.env.SALT_ROUNDS || 10, // the more the salt rounds the more the time it takes to hash the password
-  // Product Specific Configuration
+  SALT_ROUNDS: process.env.SALT_ROUNDS || 10,
   MAX_PRODUCT_IMAGE_LIMIT: process.env.MAX_PRODUCT_IMAGE_LIMIT || 3,
   SMTP_URL:
     process.env.SMTP_URL ||

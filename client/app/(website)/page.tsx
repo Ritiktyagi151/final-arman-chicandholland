@@ -29,8 +29,8 @@ export default function Home() {
           {/* Video Container */}
           <div className="relative h-auto md:h-screen">
             <HlsVideo
-  src="/home-page1.mp4"
-  fallbackSrc="/home-page1.mp4"
+  src="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/Landingpagevideo/home.mp4"
+  fallbackSrc="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/Landingpagevideo/home.mp4"
   autoPlay
   muted
   loop

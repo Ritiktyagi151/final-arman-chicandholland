@@ -4,25 +4,32 @@ import CONFIG from "./config";
 
 let modelsPath = "";
 
-// for dev use
+/**
+ * Path handling for entities
+ * __dirname use karne se ye current folder (dist ya src) ke mutabik models dhoondega
+ */
 if (CONFIG.PRODUCTION) {
-  // for prod use
-  modelsPath = path.join(process.cwd(), "models", "*.js");
+    // Production mein: dist/models/*.js
+    modelsPath = path.join(__dirname, "models", "*.js");
 } else {
-  // for dev use
-  modelsPath = path.join(process.cwd(), "src", "models", "*.ts");
+    // Development mein: src/models/*.ts
+    modelsPath = path.join(__dirname, "models", "*.ts");
 }
 
 const db = new DataSource({
-  type: "mysql",
-  url: CONFIG.DB_URL,
+    type: "mysql",
+    url: CONFIG.DB_URL,
 
-  synchronize: false,     
-  dropSchema: false,     
+    // Production mein ise hamesha false rakhein
+    synchronize: false,
+    dropSchema: false,
 
-  entities: [modelsPath],
-  poolSize: CONFIG.DB_POOL_SIZE,
+    // Entities ka path correct kar diya gaya hai
+    entities: [modelsPath],
+    poolSize: CONFIG.DB_POOL_SIZE,
+    
+    // Debugging ke liye logging enable kar sakte hain agar zaroorat ho
+    logging: CONFIG.PRODUCTION ? false : true,
 });
-
 
 export default db;
