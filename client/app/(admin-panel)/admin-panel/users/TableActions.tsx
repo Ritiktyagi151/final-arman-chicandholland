@@ -26,7 +26,7 @@ import EditUserForm from "@/app/(admin-panel)/admin-panel/users/EditUser";
 const TableActions = ({ data }: { data: any }) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const { executeAsync, loading } = useHttp(`users/${data.id}`, "DELETE");
+  const { executeAsync, loading } = useHttp(`/users/${data.id}`, "DELETE");
 
   return (
     <>
