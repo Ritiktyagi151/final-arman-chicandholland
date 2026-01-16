@@ -245,6 +245,7 @@ const config = {
         prata: "var(--font-prata)",
         mysi: "var(--font-msyi)",
         adornstoryserif: "var(--font-adornstoryserif)",
+         brandon: ["Brandon Grotesque", "sans-serif"],
         // Luxury fonts
         adorned: ['Playfair Display', 'Georgia', 'serif'],
         elegant: ['Cormorant Garamond', 'Georgia', 'serif'],

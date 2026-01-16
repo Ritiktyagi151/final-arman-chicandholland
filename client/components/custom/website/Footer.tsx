@@ -6,27 +6,27 @@ export default function Footer() {
       <div className="flex flex-col items-center justify-center ">
 
         {/* --- TOP MENU ROW (3 COLUMNS) --- */}
-        <div className="grid grid-cols-3 gap-20 text-center">
+        <div className="grid grid-cols-3 gap-40 text-center">
 
           {/* Column 1 */}
-          <div className="flex flex-col gap-2 font-adornstoryserif tracking-wider">
+          <div className="flex flex-col gap-2 text-center font-adornstoryserif tracking-wider">
             <Link href="/"><p className="text-lg ">HOME</p></Link>
             <Link href="/brand"><p className="text-lg hover:text-red-500">BRAND</p></Link>
-            <Link href="/collections"><p className="text-lg hover:text-red-500">COLLECTIONS</p></Link>
+            <Link href="/collections"><p className="text-lg hover:text-red-500">SHOWS/EVENTS</p></Link>
           </div>
 
           {/* Column 2 */}
-          <div className="flex flex-col gap-2 font-adornstoryserif tracking-wider">
-            <Link href="/shows-and-events"><p className="text-lg hover:text-red-500">SHOWS/EVENTS</p></Link>
+          <div className="flex flex-col text-center gap-2 font-adornstoryserif tracking-wider">
+            <Link href="/contact-us"><p className="text-lg hover:text-red-500">CONTACT US</p></Link>
             <Link href="/find-a-store"><p className="text-lg hover:text-red-500">FIND A STORE</p></Link>
             <Link href="/size-chart"><p className="text-lg hover:text-red-500">SIZE CHART</p></Link>
           </div>
 
           {/* Column 3 */}
-          <div className="flex flex-col gap-2 font-adornstoryserif tracking-wider">
-            <Link href="/contact-us"><p className="text-lg hover:text-red-500" >CONTACT US</p></Link>
-            <Link href="/become-a-retailer"><p className="text-lg hover:text-red-500">BECOME A RETAILER</p></Link>
-            <Link href="/login"><p className="text-lg hover:text-red-500" >LOGIN</p></Link>
+          <div className="flex flex-col text-center gap-2 font-adornstoryserif tracking-wider">
+            <div ><p className="text-lg hover:text-red-500" >FOLLOW US</p></div>
+            <a href="https://www.facebook.com/chicandholland"><p className="text-lg hover:text-red-500">FACEBOOK</p></a>
+            <a href="https://www.instagram.com/chicandholland/"><p className="text-lg hover:text-red-500" >INSTAGRAM</p></a>
           </div>
         </div>
 

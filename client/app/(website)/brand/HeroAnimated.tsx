@@ -45,7 +45,7 @@ export default function HeroAnimated() {
   {/* First Paragraph — brighter */}
   <p className="animated-text-block font-adornstoryserif text-[19px] md:text-[21px] leading-[1.9] tracking-[0.4px] text-[#f2f2f2] max-w-[95%] mt-1 drop-shadow-[0_2px_6px_rgba(0,0,0,0.65)]">
     Faiza Talat founded{" "}
-    <span className="text-[#C9A39A] font-semibold drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
+    <span className="text-[#C9A39A] font-semibold  drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">
       Chic & Holland
     </span>{" "}
     in 2015, realizing a childhood dream of bringing her vision of exquisitely
@@ -71,7 +71,7 @@ export default function HeroAnimated() {
           <div className="flex justify-center md:justify-end">
             <div className="rounded-2xl overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.3)] floating-frame">
               <CustomizedImage
-                src="/faiza-falat.jpeg"
+                src="/faiza-talat.jpg"
                 alt="Faiza Talat"
                 unoptimized
                 className="w-[260px] h-[360px] md:w-[440px] md:h-[560px] object-cover"
