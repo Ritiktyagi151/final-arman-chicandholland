@@ -29,8 +29,8 @@ export default function Home() {
           {/* Video Container */}
           <div className="relative h-auto md:h-screen">
             <HlsVideo
-  src="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/Landingpagevideo/home.mp4"
-  fallbackSrc="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/Landingpagevideo/home.mp4"
+  src="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/Landingpagevideo/landingpage.mp4"
+  fallbackSrc="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/Landingpagevideo/landingpage.mp4"
   autoPlay
   muted
   loop
@@ -213,7 +213,7 @@ export default function Home() {
       <SwiperSlide>
         <div className="relative group overflow-hidden shadow-lg transition-all duration-500">
           <img
-            src="/HF110423A-(2).jpg"
+            src="/homepage-section3-img/HF110423A-one-more-new.jpg"
             className="w-full h-[580px] object-fill group-hover:scale-110 transition-transform duration-500"
           />
         </div>
@@ -223,7 +223,7 @@ export default function Home() {
       <SwiperSlide>
         <div className="relative group overflow-hidden shadow-lg transition-all duration-500">
           <img
-            src="/HF110510A.jpg"
+            src="/homepage-section3-img/HF110510A.jpg"
 className="w-full h-[580px] object-fill group-hover:scale-110 transition-transform duration-500"          />
         </div>
       </SwiperSlide>
@@ -232,7 +232,7 @@ className="w-full h-[580px] object-fill group-hover:scale-110 transition-transfo
       <SwiperSlide>
         <div className="relative group overflow-hidden shadow-lg transition-all duration-500">
           <img
-            src="/HF110575.jpg"
+            src="/homepage-section3-img/HF110529A.jpg"
 className="w-full h-[580px] object-fill group-hover:scale-110 transition-transform duration-500"          />
         </div>
       </SwiperSlide>
@@ -241,7 +241,7 @@ className="w-full h-[580px] object-fill group-hover:scale-110 transition-transfo
       <SwiperSlide>
         <div className="relative group overflow-hidden shadow-lg transition-all duration-500">
           <img
-            src="/HF110529A-(2).jpg"
+            src="/homepage-section3-img/HF110575.jpg"
 className="w-full h-[580px] object-fill group-hover:scale-110 transition-transform duration-500"          />
         </div>
       </SwiperSlide>
@@ -250,7 +250,7 @@ className="w-full h-[580px] object-fill group-hover:scale-110 transition-transfo
         <SwiperSlide>
           <div className="relative group overflow-hidden shadow-lg transition-all duration-500">
             <img
-              src="/PH12012A.jpg"
+              src="/homepage-section3-img/PH12012A.jpg"
 className="w-full h-[580px] object-fill group-hover:scale-110 transition-transform duration-500"            />
           </div>
         </SwiperSlide>
@@ -259,7 +259,7 @@ className="w-full h-[580px] object-fill group-hover:scale-110 transition-transfo
         <SwiperSlide>
           <div className="relative group overflow-hidden shadow-lg transition-all duration-500">
             <img
-              src="/unnamed-(1).jpg"
+              src="/homepage-section3-img/unnamed-img-new.jpg"
 className="w-full h-[580px] object-fill group-hover:scale-110 transition-transform duration-500"            />
           </div>
         </SwiperSlide>

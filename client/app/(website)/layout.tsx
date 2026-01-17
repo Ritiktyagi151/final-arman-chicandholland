@@ -6,6 +6,8 @@ import Header from "@/components/custom/website/Header";
 import Footer from "@/components/custom/website/Footer";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
+import Loaders from "./Loader";
+
 
 const poppins = Poppins({
   weight: ["400", "500", "600"],
@@ -75,7 +77,7 @@ export default function RootLayout({
       helveticaneuemedium.variable,
     )}
   >
-
+<Loaders/>
         <Header />
         <main className="w-full">{children}</main>
         <Footer />

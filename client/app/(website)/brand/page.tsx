@@ -286,7 +286,7 @@ export default function BrandPage() {
               />
             </div>
             <div className="flex flex-col gap-2 md:w-[70%] md:justify-center">
-              <h2 className="text-center font-adornstoryserif text-2xl text-[#C9A39A] underline 3xl:text-3xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out">
+              <h2 className="text-center font-adornstoryserif text-6xl text-[#C9A39A] underline 3xl:text-3xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out">
                 WORLD
               </h2>
               {[
@@ -296,7 +296,7 @@ export default function BrandPage() {
               ].map((text, index) => (
                 <p
                   key={index}
-                  className="mx-auto max-w-[80%] text-left font-adornstoryserif text-base leading-7 md:text-md 2xl:text-xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal font-premium-bold font-outline-bold opacity-0 translate-y-6 transition-all duration-700 ease-out"
+                  className="mx-auto max-w-[80%]  text-left font-brandon  leading-7 md:text-md 2xl:text-xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal  opacity-0 translate-y-6 transition-all duration-700 ease-out"
                   style={{ transitionDelay: `${300 + index * 150}ms` }}
                 >
                   {text}
