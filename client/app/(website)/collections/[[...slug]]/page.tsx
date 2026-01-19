@@ -76,13 +76,13 @@ export default async function CollectionProducts(props: {
         subCategoryId={subCategoryId}
       />
 
-      <div className="mx-8 mt-10 flex flex-col gap-6">
+      <div className="mx-8 mt-10 flex flex-col gap-2">
         {/* Server-rendered initial products with videos */}
         {initialGroups.map((group, i) => (
           <div
             key={`server-group-${i}`}
             className={cn(
-              "grid grid-cols-1 gap-4",
+              "grid grid-cols-1 gap-2",
               group.video
                 ? "lg:grid-cols-3 lg:grid-rows-2"
                 : "lg:grid-cols-4 lg:grid-rows-1",
