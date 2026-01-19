@@ -49,8 +49,9 @@ export default function StatusLabelBox({ item }: { item: any }) {
           <div className="text-center">
             <div className="text-xs font-semibold text-gray-500 mb-1">SIZE</div>
             <div className="text-lg font-bold text-gray-800 bg-gray-100 py-1 px-3 rounded-md border border-gray-300">
-              {item.size}
+              EU {item.size}/{item.quantity}
             </div>
+
           </div>
           <div className="text-center">
             <div className="text-xs font-semibold text-gray-500 mb-1">COLOR</div>

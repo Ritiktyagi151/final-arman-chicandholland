@@ -37,20 +37,26 @@ export default function Footer() {
 
         {/* --- MIDDLE LOGO --- */}
         <div className="mt-12 mb-4">
+          <Link href = "/">
           <img
             src="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/brand_page/CH%20Monogram_Rose%20Gold.png"
             className="w-[100px] md:w-[200px] lg:w-[250px] object-contain"
             alt="Chic & Holland Monogram"
           />
+          </Link>
+          
         </div>
 
         {/* --- MAIN BRAND TITLE --- */}
         <div className="w-full flex justify-center">
-          <img
+          <Link href="/" >
+            <img
             src="/brand-logo.png"
             className="w-[250px] md:w-[500px] lg:w-[700px] object-contain"
             alt="Chic & Holland Full Logo"
           />
+          </Link>
+          
         </div>
 
         {/* Optional: Copyright Section */}
