@@ -40,20 +40,19 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
 
 const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
-// const navigationMenuTriggerStyle = cva(
-//   "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
-// );
-
-// old
-
-// const navigationMenuTriggerStyle = cva(
-//   "group inline-flex h-10 w-max items-center  justify-center rounded-md  px-4 py-2 text-sm   2xl:text-2xl 3xl:text-3xl 4xl:text-3xl font-small text-[#C9A39A] transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
-// );
-
-//new
-
+/**
+ * UPDATED STYLE: 
+ * Maine yahan 'after' pseudo-elements add kiye hain jo aapke CSS 
+ * animation (.nav-link::after) ko mimic karte hain.
+ */
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-10 w-max items-center  justify-center rounded-md  px-4 py-2 text-sm smd:text-xs xl:text-base 2xl:text-xl 3xl:text-3xl 4xl:text-3xl font-small text-[#C9A39A] transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
+  "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm smd:text-xs xl:text-base 2xl:text-xl 3xl:text-3xl 4xl:text-3xl font-small text-[#C9A39A] transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 uppercase relative whitespace-nowrap " +
+  // Hover Underline Effect (after elements)
+  "after:content-[''] after:absolute after:w-full after:h-[1px] after:bottom-[-4px] after:left-0 after:bg-[#d1d5db] " +
+  "after:scale-x-0 after:origin-bottom-right after:transition-transform after:duration-300 after:ease-out " +
+  // Hover & Active state for underline
+  "hover:after:scale-x-100 hover:after:origin-bottom-left " +
+  "data-[active]:after:scale-x-100 data-[active]:after:origin-bottom-left"
 );
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -95,7 +94,6 @@ const NavigationMenuViewport = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
 >(({ className, ...props }, ref) => (
-  // <div className={cn("absolute left-0 top-full flex justify-center")}>
   <div
     className={cn(
       "fixed left-0 top-[115px] flex w-full justify-center lg:mr-4 3xl:top-[144px]",
@@ -142,4 +140,4 @@ export {
   NavigationMenuLink,
   NavigationMenuIndicator,
   NavigationMenuViewport,
-};
+};  

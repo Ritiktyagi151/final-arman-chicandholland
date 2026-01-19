@@ -265,23 +265,23 @@ const Header = async () => {
                   {sortedCategories.map((category: any) => (
                    <HoverCard key={category.id} closeDelay={200}>
   <HoverCardTrigger asChild className="cursor-pointer">
-    <div>
-      <p className="!my-3 font-adornstoryserif text-xl font-bold md:text-2xl 2xl:text-3xl 3xl:text-3xl">
-        {category.name}
-      </p>
+   <div>
+  <p className="!mb-4 !mt-3 w-fit border-b-[3px] border-[#C9A39A] pb-1 font-adornstoryserif text-xl font-bold md:text-2xl 2xl:text-3xl 3xl:text-3xl">
+    {category.name}
+  </p>
 
-      {category.subCategories.map((subcategory) => (
-        <Link
-          key={subcategory.id}
-          className="cursor-pointer"
-          href={`/collections/${category.id}/${subcategory.id}`}
-        >
-          <p className="!my-3 font-mysi text-base transition-all hover:text-blue-500 md:text-xl 2xl:text-2xl 3xl:text-3xl">
-            {subcategory.name}
-          </p>
-        </Link>
-      ))}
-    </div>
+  {category.subCategories.map((subcategory) => (
+    <Link
+      key={subcategory.id}
+      className="cursor-pointer"
+      href={`/collections/${category.id}/${subcategory.id}`}
+    >
+      <p className="!my-3 font-mysi text-base transition-all hover:text-blue-500 md:text-xl 2xl:text-2xl 3xl:text-3xl">
+        {subcategory.name}
+      </p>
+    </Link>
+  ))}
+</div>
   </HoverCardTrigger>
 </HoverCard>
 
