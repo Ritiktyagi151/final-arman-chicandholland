@@ -1,17 +1,13 @@
 // import { Router, Request, Response } from "express";
 // import asyncHandler from "../middleware/AsyncHandler";
-// import RetailerOrderStyles from "../models/RetailerOrderStyles";
 // import StyleProgress from "../models/StyleProgress";
-
-// import {RetailerOrder} from "../models/RetailerOrder";   // ⭐ FIXED IMPORT
-// import StockOrderStyles from "../models/StockOrderStyles"; // ⭐ FIXED IMPORT
-// import db from "../db"; // ⭐ FIXED IMPORT
+// import db from "../db";
 
 // const router = Router();
 
 // /**
 //  * ======================================================
-//  *  📌 1. FRESH ORDER REPORT
+//  *  📌 1. FRESH ORDER STATUS REPORT
 //  *  /api/report/status/report/:orderId
 //  * ======================================================
 //  */
@@ -20,49 +16,80 @@
 //   asyncHandler(async (req: Request, res: Response) => {
 //     const { orderId } = req.params;
 
-//     const styles = await RetailerOrderStyles.find({
-//       where: { retailerOrder: { id: Number(orderId) } },
-//       order: { id: "ASC" },
-//     });
+//     const rows = await db.query(
+//       `
+//       SELECT
+//         ros.id               AS styleId,
+//         ros.styleNo          AS styleNo,
+//         ros.barcode          AS barcode,
 
-//     if (styles.length === 0) {
-//       return res.json({
-//         success: false,
-//         message: "No style data found for this retailer order",
-//       });
+//         -- 🔥 RAW VALUES ONLY
+//         ros.size             AS size,
+//         ros.quantity         AS quantity,
+
+//         ro.purchaeOrderNo    AS purchaseOrderNo,
+
+//         -- SAME AS PREVIEW
+//         f.color              AS color,
+//         f.admin_us_size      AS admin_us_size
+
+//       FROM retailer_order_styles ros
+//       INNER JOIN retailer_orders ro
+//         ON ro.id = ros.retailerOrderId
+
+//       LEFT JOIN retailer_favourites_orders rfo
+//         ON rfo.id = ro.favouriteOrderId
+
+//       LEFT JOIN favourites f
+//         ON FIND_IN_SET(f.id, rfo.favourite_ids) > 0
+
+//       WHERE ro.id = ?
+//       ORDER BY ros.id ASC
+//       `,
+//       [orderId]
+//     );
+
+//     if (!rows.length) {
+//       return res.json({ success: false, message: "No style data found" });
 //     }
 
-//     const fullData: any[] = [];
+//     const data = [];
 
-//     for (const style of styles) {
+//     for (const row of rows) {
 //       const progress = await StyleProgress.find({
-//         where: { barcode: style.barcode },
+//         where: { barcode: row.barcode },
 //         order: { id: "ASC" },
 //       });
 
-//       const completed = progress.reduce((sum, p) => sum + p.qty, 0);
+//       const completed = progress.reduce(
+//         (sum, p) => sum + (p.qty || 0),
+//         0
+//       );
 
-//       fullData.push({
-//         styleId: style.id,
-//         styleNo: style.styleNo,
-//         barcode: style.barcode,
-//         totalQty: style.quantity,
+//       data.push({
+//         styleId: row.styleId,
+//         styleNo: row.styleNo,
+//         barcode: row.barcode,
+
+//         // ✅ LABEL DATA (RAW)
+//         size: row.admin_us_size ?? row.size,
+//         quantity: row.quantity ?? 1,
+//         color: row.color,
+//         purchaseOrderNo: row.purchaseOrderNo,
+
 //         completed,
-//         remaining: style.quantity - completed,
+//         remaining: (row.quantity ?? 1) - completed,
 //         progress,
 //       });
 //     }
 
-//     return res.json({
-//       success: true,
-//       data: fullData,
-//     });
+//     return res.json({ success: true, data });
 //   })
 // );
 
 // /**
 //  * ======================================================
-//  *  📌 2. STOCK ORDER REPORT
+//  *  📌 2. STOCK ORDER STATUS REPORT
 //  *  /api/report/stock-status/report/:orderId
 //  * ======================================================
 //  */
@@ -71,77 +98,82 @@
 //   asyncHandler(async (req: Request, res: Response) => {
 //     const { orderId } = req.params;
 
-//     const order = await RetailerOrder.findOne({
-//       where: { id: Number(orderId), is_stock_order: true },
-//     });
+//     const rows = await db.query(
+//       `
+//       SELECT
+//         sos.id              AS styleId,
+//         sos.styleNo         AS styleNo,
+//         sos.barcode         AS barcode,
 
-//     if (!order) {
-//       return res.json({
-//         success: false,
-//         message: "This is not a stock order",
-//       });
+//         -- 🔥 RAW VALUES ONLY
+//         sos.size            AS size,
+//         sos.quantity        AS quantity,
+
+//         ro.purchaeOrderNo   AS purchaseOrderNo,
+
+//         -- SAME AS PREVIEW
+//         s.mesh_color        AS color
+
+//       FROM stock_order_styles sos
+//       INNER JOIN retailer_orders ro
+//         ON ro.id = sos.retailerOrderId
+
+//       INNER JOIN retailer_stock_orders rso
+//         ON rso.id = ro.stockOrderId
+
+//       INNER JOIN stock s
+//         ON s.id = rso.stockId
+
+//       WHERE ro.id = ?
+//       ORDER BY sos.id ASC
+//       `,
+//       [orderId]
+//     );
+
+//     if (!rows.length) {
+//       return res.json({ success: false, message: "No stock style data found" });
 //     }
 
-//     const styles = await StockOrderStyles.find({
-//       where: { retailerOrder: { id: order.id } },
-//       order: { id: "ASC" },
-//     });
+//     const data = [];
 
-//     if (styles.length === 0) {
-//       return res.json({
-//         success: false,
-//         message: "No stock style data found",
+//     for (const row of rows) {
+//       const logs = await StyleProgress.find({
+//         where: { barcode: row.barcode },
+//         order: { id: "ASC" },
 //       });
-//     }
-
-//     const report: any[] = [];
-
-//     for (const s of styles) {
-//     const logs = await db.query(
-//   `
-//     SELECT 
-//       id,
-//       stage,
-//       qty,
-//       date AS createdAt
-//     FROM styleProgress
-//     WHERE barcode = ?
-//     ORDER BY date ASC
-//   `,
-//   [s.barcode]
-// );
-
 
 //       const completedQty = logs.reduce(
-//         (sum: number, row: any) => sum + (row.qty || 0),
+//         (sum: number, r: any) => sum + (r.qty || 0),
 //         0
 //       );
 
-//       report.push({
-//         styleId: s.id,
-//         styleNo: s.styleNo,
-//         barcode: s.barcode,
-//         totalQty: s.quantity || 1,
+//       data.push({
+//         styleId: row.styleId,
+//         styleNo: row.styleNo,
+//         barcode: row.barcode,
+
+//         // ✅ LABEL DATA (RAW)
+//         size: row.size,
+//         quantity: row.quantity ?? 1,
+//         color: row.color,
+//         purchaseOrderNo: row.purchaseOrderNo,
+
 //         completedQty,
-//         remainingQty: (s.quantity || 1) - completedQty,
+//         remainingQty: (row.quantity ?? 1) - completedQty,
 //         progress: logs,
 //       });
 //     }
 
-//     return res.json({
-//       success: true,
-//       data: report,
-//     });
+//     return res.json({ success: true, data });
 //   })
 // );
-
 
 // export default router;
 import { Router, Request, Response } from "express";
 import asyncHandler from "../middleware/AsyncHandler";
 import StyleProgress from "../models/StyleProgress";
-import { RetailerOrder } from "../models/RetailerOrder";
 import db from "../db";
+import { convertToUSSize } from "../lib/sizeConversion";
 
 const router = Router();
 
@@ -156,53 +188,44 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const { orderId } = req.params;
 
-    /**
-     * 🔥 COLOR SOURCE = favourites.color  (SAME AS PREVIEW)
-     */
-   const rows = await db.query(
-  `
-  SELECT
-    ros.id               AS styleId,
-    ros.styleNo          AS styleNo,
-    ros.barcode          AS barcode,
-    ros.quantity         AS totalQty,
-    ros.size             AS size,
-    ro.purchaeOrderNo    AS purchaseOrderNo,
+    const rows = await db.query(
+      `
+      SELECT
+        ros.id               AS styleId,
+        ros.styleNo          AS styleNo,
+        ros.barcode          AS barcode,
 
-    -- ✅ SAME SOURCE AS PREVIEW
-    f.color              AS color
+        -- 🔥 RAW VALUES ONLY
+        ros.size             AS size,
+        ros.quantity         AS quantity,
 
-  FROM retailer_order_styles ros
+        ro.purchaeOrderNo    AS purchaseOrderNo,
 
-  INNER JOIN retailer_orders ro
-    ON ro.id = ros.retailerOrderId
+        -- SAME AS PREVIEW
+        f.color              AS color,
+        f.admin_us_size      AS admin_us_size
 
-  LEFT JOIN retailer_favourites_orders rfo
-    ON rfo.id = ro.favouriteOrderId
+      FROM retailer_order_styles ros
+      INNER JOIN retailer_orders ro
+        ON ro.id = ros.retailerOrderId
 
-  LEFT JOIN favourites f
-    ON FIND_IN_SET(f.id, rfo.favourite_ids) > 0
+      LEFT JOIN retailer_favourites_orders rfo
+        ON rfo.id = ro.favouriteOrderId
 
-  -- 🔥 IMPORTANT FIX
-  LEFT JOIN products p
-    ON p.id = f.productId
-   AND p.productCode = ros.styleNo
+      LEFT JOIN favourites f
+        ON FIND_IN_SET(f.id, rfo.favourite_ids) > 0
 
-  WHERE ro.id = ?
-  ORDER BY ros.id ASC
-  `,
-  [orderId]
-);
-
+      WHERE ro.id = ?
+      ORDER BY ros.id ASC
+      `,
+      [orderId]
+    );
 
     if (!rows.length) {
-      return res.json({
-        success: false,
-        message: "No style data found for this retailer order",
-      });
+      return res.json({ success: false, message: "No style data found" });
     }
 
-    const data: any[] = [];
+    const data = [];
 
     for (const row of rows) {
       const progress = await StyleProgress.find({
@@ -220,22 +243,19 @@ router.get(
         styleNo: row.styleNo,
         barcode: row.barcode,
 
-        // ✅ LABEL BOX DATA
-        size: `${row.size}/${row.totalQty}`,
+        // ✅ LABEL DATA (RAW)
+        size: row.admin_us_size ?? row.size,
+        quantity: row.quantity ?? 1,
         color: row.color,
         purchaseOrderNo: row.purchaseOrderNo,
 
-        totalQty: row.totalQty,
         completed,
-        remaining: row.totalQty - completed,
+        remaining: (row.quantity ?? 1) - completed,
         progress,
       });
     }
 
-    return res.json({
-      success: true,
-      data,
-    });
+    return res.json({ success: true, data });
   })
 );
 
@@ -250,87 +270,76 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     const { orderId } = req.params;
 
-    /**
-     * 🔥 COLOR SOURCE = stock.mesh_color (SAME AS PREVIEW)
-     */
     const rows = await db.query(
       `
       SELECT
-        sos.id              AS styleId,
-        sos.styleNo         AS styleNo,
-        sos.barcode         AS barcode,
-        sos.quantity        AS totalQty,
-        sos.size            AS size,
-        ro.purchaeOrderNo   AS purchaseOrderNo,
+  sos.id        AS styleId,
+  sos.styleNo   AS styleNo,
+  sos.barcode   AS barcode,
 
-        -- ✅ SAME MODEL AS PREVIEW
-        s.mesh_color        AS color
+  sos.size      AS size,
+  sos.quantity  AS quantity,
 
-      FROM stock_order_styles sos
-      INNER JOIN retailer_orders ro
-        ON ro.id = sos.retailerOrderId
+  s.size_country AS size_country,   -- ✅ ADD THIS
 
-      INNER JOIN retailer_stock_orders rso
-        ON rso.id = ro.stockOrderId
+  ro.purchaeOrderNo AS purchaseOrderNo,
+  s.mesh_color  AS color
 
-      INNER JOIN stock s
-        ON s.id = rso.stockId
+FROM stock_order_styles sos
+INNER JOIN retailer_orders ro
+  ON ro.id = sos.retailerOrderId
 
-      WHERE ro.id = ?
-      ORDER BY sos.id ASC
+INNER JOIN retailer_stock_orders rso
+  ON rso.id = ro.stockOrderId
+
+INNER JOIN stock s
+  ON s.id = rso.stockId
+
+WHERE ro.id = ?
+ORDER BY sos.id ASC
+
       `,
       [orderId]
     );
 
     if (!rows.length) {
-      return res.json({
-        success: false,
-        message: "No stock style data found",
-      });
+      return res.json({ success: false, message: "No stock style data found" });
     }
 
-    const report: any[] = [];
+    const data = [];
 
     for (const row of rows) {
-      const logs = await db.query(
-        `
-        SELECT 
-          stage,
-          qty,
-          date AS createdAt
-        FROM styleProgress
-        WHERE barcode = ?
-        ORDER BY date ASC
-        `,
-        [row.barcode]
-      );
+      const logs = await StyleProgress.find({
+        where: { barcode: row.barcode },
+        order: { id: "ASC" },
+      });
 
       const completedQty = logs.reduce(
         (sum: number, r: any) => sum + (r.qty || 0),
         0
       );
 
-      report.push({
-        styleId: row.styleId,
-        styleNo: row.styleNo,
-        barcode: row.barcode,
+   data.push({
+  styleId: row.styleId,
+  styleNo: row.styleNo,
+  barcode: row.barcode,
 
-        // ✅ LABEL BOX DATA
-        size: `${row.size}/${row.totalQty || 1}`,
-        color: row.color,
-        purchaseOrderNo: row.purchaseOrderNo,
+  // ✅ CORRECT FIX
+  size: convertToUSSize(row.size, row.size_country),
 
-        totalQty: row.totalQty || 1,
-        completedQty,
-        remainingQty: (row.totalQty || 1) - completedQty,
-        progress: logs,
-      });
+  quantity: row.quantity ?? 1,
+  color: row.color,
+  purchaseOrderNo: row.purchaseOrderNo,
+
+  completedQty,
+  remainingQty: (row.quantity ?? 1) - completedQty,
+  progress: logs,
+});
+
+
     }
 
-    return res.json({
-      success: true,
-      data: report,
-    });
+    return res.json({ success: true, data });
   })
 );
 

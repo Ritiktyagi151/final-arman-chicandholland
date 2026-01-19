@@ -256,19 +256,17 @@ export default function BrandPage() {
 
       {/* DISCOVER THE AESTHETIC Sections */}
       <div className="space-y-12 py-8">
-         <header className="pattern-bg py-16 md:py-12 mb-8 md:mb-10 text-center section-fade reveal-on-scroll rounded-3xl mx-4">
-          <div className="overflow-hidden px-4">
-            <h1 className="font-adornstoryserif text-3xl md:text-5xl lg:text-6xl bg-gradient-to-r from-primary via-white to-primary bg-clip-text text-transparent transform transition-all duration-1000 leading-tight">
-              DISCOVER THE AESTHETIC OF THE HOUSE
-            </h1>
-
-            {/* --- Nayi Line Yahan Hai --- */}
-            <div className="mt-4 flex justify-center items-center">
-              <div className="h-[3px] w-3/4 md:w-1/2 rounded-[100%] bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 animate-pulse shadow-[0_0_15px_rgba(var(--primary),0.5)]"></div>
-            </div>
-            {/* --------------------------- */}
-          </div>
-        </header>
+      <header className="pattern-bg py-16 md:py-12 mb-8 md:mb-10 text-center section-fade reveal-on-scroll rounded-3xl mx-4">
+  <div className="overflow-hidden px-4">
+    {/* Heading with relative position to anchor the line */}
+    <h1 className="relative pb-6 font-adornstoryserif text-3xl md:text-5xl lg:text-6xl bg-gradient-to-r from-primary via-white to-primary bg-clip-text text-transparent transform transition-all duration-1000 leading-tight">
+      DISCOVER THE AESTHETIC OF THE HOUSE
+      
+      {/* Premium Gradient Underline */}
+      <span className="absolute bottom-0 left-1/2 h-[1.5px] w-48 md:w-80 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#C9A39A] to-transparent"></span>
+    </h1>
+  </div>
+</header>
 
         <div className="container space-y-24 bg-black text-white">
           {/* WORLD Section */}
@@ -286,9 +284,10 @@ export default function BrandPage() {
               />
             </div>
             <div className="flex flex-col gap-2 md:w-[70%] md:justify-center">
-              <h2 className="text-center font-adornstoryserif text-6xl text-[#C9A39A] underline 3xl:text-3xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out">
-                WORLD
-              </h2>
+      <h2 className="relative mb-10 pb-2 text-center font-adornstoryserif text-6xl text-[#C9A39A] 3xl:text-3xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out animate-reveal">
+  WORLD
+  <span className="absolute bottom-0 left-1/2 h-[1.5px] w-40 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#C9A39A] to-transparent"></span>
+</h2>
               {[
                 "The Chic & Holland Design Team is at the core of the brand. They seek innovation, high-quality raw materials, and the proper implementation of each proposal., Each silhouette goes through multiple phases and includes a lot of fine details.",
                 "The following sections make up the manufacturing process: Creative Design, Pattern Department, Sewing Unit, Handmade ornamentation Department, 1st Stage- Quality Control, End Stage, and Final Quality Control.",
@@ -296,7 +295,7 @@ export default function BrandPage() {
               ].map((text, index) => (
                 <p
                   key={index}
-                  className="mx-auto max-w-[80%]  text-left font-brandon  leading-7 md:text-md 2xl:text-xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal  opacity-0 translate-y-6 transition-all duration-700 ease-out"
+                  className="mx-auto max-w-[80%]  text-left font-mysi   leading-7 md:text-md 2xl:text-2xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal  opacity-0 translate-y-6 transition-all duration-700 ease-out"
                   style={{ transitionDelay: `${300 + index * 150}ms` }}
                 >
                   {text}
@@ -310,23 +309,28 @@ export default function BrandPage() {
             ref={addToSectionsRef}
             className="flex flex-col gap-8 md:flex-row md:justify-between opacity-0"
           >
-            <div className="flex flex-col gap-8 md:w-[70%] md:justify-center order-2 md:order-1">
-              <h2 className="text-center font-adornstoryserif text-2xl text-[#C9A39A] underline 3xl:text-3xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out">
-                CLASSIC MEET CONTEMPORARY
-              </h2>
-              {[
-                "A quick look through the Chic and Holland collections reveals gown after gown meant to make a woman feel like a tall glass of beauty. The collection's color palette, extravagant detailing, and neckline or décolletage decorations are what make it modern.",
-                "Chic and Holland woman is tough, elegant and sophisticated. She knows what she wants and dresses for herself. She believes in timeless elegance which can be worn to any event rather than trendy pieces which will only last a season or two. She cares about the quality and attention to detail.",
-              ].map((text, index) => (
-                <p
-                  key={index}
-                  className="mx-auto max-w-[80%] text-left font-adornstoryserif text-base leading-7 md:text-md 2xl:text-xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal font-premium-bold font-outline-bold opacity-0 translate-y-6 transition-all duration-700 ease-out"
-                  style={{ transitionDelay: `${300 + index * 150}ms` }}
-                >
-                  {text}
-                </p>
-              ))}
-            </div>
+           <div className="flex flex-col gap-4 md:w-[70%] md:justify-center order-2 md:order-1">
+  {/* Heading with Premium Gradient Line */}
+  <h2 className="relative mb-8 pb-4 text-center font-adornstoryserif text-5xl text-[#C9A39A] 3xl:text-3xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out animate-reveal">
+    CLASSIC MEET CONTEMPORARY
+    {/* Underline Decoration */}
+    <span className="absolute bottom-0 left-1/2 h-[1.5px] w-72 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#C9A39A] to-transparent"></span>
+  </h2>
+
+  {/* Paragraphs */}
+  {[
+    "A quick look through the Chic and Holland collections reveals gown after gown meant to make a woman feel like a tall glass of beauty. The collection's color palette, extravagant detailing, and neckline or décolletage decorations are what make it modern.",
+    "Chic and Holland woman is tough, elegant and sophisticated. She knows what she wants and dresses for herself. She believes in timeless elegance which can be worn to any event rather than trendy pieces which will only last a season or two. She cares about the quality and attention to detail.",
+  ].map((text, index) => (
+    <p
+      key={index}
+      className="mx-auto max-w-[80%] text-left font-mysi text-base leading-7 md:text-md 2xl:text-2xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal font-premium-bold font-outline-bold opacity-0 translate-y-6 transition-all duration-700 ease-out"
+      style={{ transitionDelay: `${300 + index * 150}ms` }}
+    >
+      {text}
+    </p>
+  ))}
+</div>
             <div className="md:w-[50%] opacity-0 translate-x-10 transition-all duration-800 ease-out order-1 md:order-2">
               <CustomizedImage
                 src="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/brand_page/0C4A5447%20copy.jpg"
@@ -352,23 +356,28 @@ export default function BrandPage() {
                 className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700 ease-out rounded-2xl"
               />
             </div>
-            <div className="flex flex-col gap-8 md:w-[70%] md:justify-center">
-              <h2 className="text-center font-adornstoryserif text-2xl text-[#C9A39A] underline 3xl:text-4xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out">
-                TIMELESS ELEGANCE
-              </h2>
-              {[
-                "Our aim at Chic & Holland is to design and make dresses that will never go out of fashion - something that our discerning customers will be able to enjoy and appreciate for many years to come. The colour palette, the modern fabrics, the extravagant detailing and the classic silhouette when used together lend a very contemporary air to our collections.",
-                "The Chic & Holland woman is tough, elegant and sophisticated. She knows what she wants and dresses for herself! She appreciates the finer details and the effort that goes into a high-quality handmade garment.",
-              ].map((text, index) => (
-                <p
-                  key={index}
-                  className="mx-auto max-w-[80%] text-left font-adornstoryserif text-base leading-7 md:text-md 2xl:text-xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal font-premium-bold font-outline-bold opacity-0 translate-y-6 transition-all duration-700 ease-out"
-                  style={{ transitionDelay: `${300 + index * 150}ms` }}
-                >
-                  {text}
-                </p>
-              ))}
-            </div>
+           <div className="flex flex-col gap-4 md:w-[70%] md:justify-center">
+  {/* Heading with Premium Gradient Line */}
+  <h2 className="relative mb-8 pb-4 text-center font-adornstoryserif text-4xl text-[#C9A39A] 3xl:text-4xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out animate-reveal">
+    TIMELESS ELEGANCE
+    {/* Underline Decoration */}
+    <span className="absolute bottom-0 left-1/2 h-[1.5px] w-40 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#C9A39A] to-transparent"></span>
+  </h2>
+
+  {/* Paragraphs Map */}
+  {[
+    "Our aim at Chic & Holland is to design and make dresses that will never go out of fashion - something that our discerning customers will be able to enjoy and appreciate for many years to come. The colour palette, the modern fabrics, the extravagant detailing and the classic silhouette when used together lend a very contemporary air to our collections.",
+    "The Chic & Holland woman is tough, elegant and sophisticated. She knows what she wants and dresses for herself! She appreciates the finer details and the effort that goes into a high-quality handmade garment.",
+  ].map((text, index) => (
+    <p
+      key={index}
+      className="mx-auto max-w-[80%] text-left font-mysi text-base leading-7 md:text-md 2xl:text-2xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal font-premium-bold font-outline-bold opacity-0 translate-y-6 transition-all duration-700 ease-out"
+      style={{ transitionDelay: `${300 + index * 150}ms` }}
+    >
+      {text}
+    </p>
+  ))}
+</div>
           </div>
 
           {/* TRULY HANDMADE Section */}
@@ -376,23 +385,28 @@ export default function BrandPage() {
             ref={addToSectionsRef}
             className="flex flex-col gap-8 md:flex-row md:justify-between opacity-0"
           >
-            <div className="flex flex-col gap-8 md:w-[70%] md:justify-center order-2 md:order-1">
-              <h2 className="text-center font-adornstoryserif text-2xl text-[#C9A39A] underline 3xl:text-4xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out">
-                TRULY HANDMADE
-              </h2>
-              {[
-                "We consider ourselves guardians of this craft! In a world where things are increasingly being made by machines, we choose to painstakingly make all of our dresses by hand, at our own atelier - something very few brands can truly claim. The craftsmen who've chosen to work with us have been engaged in this craft for decades which helps us maintain the highest quality, consistently.",
-                "Our dresses can take hundreds of man-hours to produce, because we'd want nothing but the very best for our customers.",
-              ].map((text, index) => (
-                <p
-                  key={index}
-                  className="mx-auto max-w-[80%] text-left font-adornstoryserif text-base leading-7 md:text-md 2xl:text-xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal font-premium-bold font-outline-bold opacity-0 translate-y-6 transition-all duration-700 ease-out"
-                  style={{ transitionDelay: `${300 + index * 150}ms` }}
-                >
-                  {text}
-                </p>
-              ))}
-            </div>
+           <div className="flex flex-col gap-4 md:w-[70%] md:justify-center order-2 md:order-1">
+  {/* Heading with Premium Gradient Line */}
+  <h2 className="relative mb-8 pb-4 text-center font-adornstoryserif text-4xl text-[#C9A39A] 3xl:text-4xl 4xl:text-5xl opacity-0 translate-y-4 transition-all duration-600 ease-out animate-reveal">
+    TRULY HANDMADE
+    {/* Underline Decoration */}
+    <span className="absolute bottom-0 left-1/2 h-[1.5px] w-40 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#C9A39A] to-transparent"></span>
+  </h2>
+
+  {/* Paragraphs Map */}
+  {[
+    "We consider ourselves guardians of this craft! In a world where things are increasingly being made by machines, we choose to painstakingly make all of our dresses by hand, at our own atelier - something very few brands can truly claim. The craftsmen who've chosen to work with us have been engaged in this craft for decades which helps us maintain the highest quality, consistently.",
+    "Our dresses can take hundreds of man-hours to produce, because we'd want nothing but the very best for our customers.",
+  ].map((text, index) => (
+    <p
+      key={index}
+      className="mx-auto max-w-[80%] text-left font-mysi text-base leading-7 md:text-md 2xl:text-2xl 3xl:text-2xl 4xl:text-2xl text-white normal-case tracking-normal font-premium-bold font-outline-bold opacity-0 translate-y-6 transition-all duration-700 ease-out"
+      style={{ transitionDelay: `${300 + index * 150}ms` }}
+    >
+      {text}
+    </p>
+  ))}
+</div>
             <div className="md:w-[50%] opacity-0 translate-x-10 transition-all duration-800 ease-out order-1 md:order-2">
               <CustomizedImage
                 src="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/brand_page/0C4A5674%20copy.jpg"
