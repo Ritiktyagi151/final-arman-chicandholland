@@ -1,67 +1,103 @@
-import { Router } from "express";
-import db from "../db";
+import { Router, Request, Response } from "express";
+import Busboy from "busboy";
+import sharp from "sharp";
 import { ColorChart } from "../models/ColorChart";
-import multer from "multer";
-import path from "path";
-import { FOLDER_NAMES } from "../constants";
+import db from "../db";
+import { storeFileInS3, getFullUrl } from "../lib/s3";
 
 const router = Router();
 const colorChartRepo = db.getRepository(ColorChart);
-
-// Upload config
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: path.join(process.cwd(), "public/settings"),
-    filename: (_, file, cb) => {
-      cb(null, `color-chart-${Date.now()}${path.extname(file.originalname)}`);
-    },
-  }),
-});
-
-
-router.get("/", async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
-    const chart = await colorChartRepo.find({
+    const charts = await colorChartRepo.find({
       order: { id: "DESC" },
-      take: 1
+      take: 1,
     });
 
-    const latest = chart[0] || null;
+    const latest = charts[0] || null;
 
-    res.json({
+    return res.json({
       success: true,
       imageUrl: latest?.imageUrl || null,
       createdAt: latest?.createdAt || null,
       updatedAt: latest?.updatedAt || null,
     });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch color chart"
+      message: "Failed to fetch color chart",
     });
   }
 });
 
 
+router.post(
+  "/upload",
+  async (req: Request, res: Response) => {
+    const busboy = Busboy({ headers: req.headers });
+    let imageBuffer: Buffer | null = null;
 
+    busboy.on("file", (_fieldname, file) => {
+      const buffers: Buffer[] = [];
 
+      file.on("data", (data: Buffer) => {
+        buffers.push(data);
+      });
 
-// 📌 ADMIN Upload Color Chart
-router.post("/upload", upload.single("image"), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, msg: "Image is required" });
+      file.on("end", () => {
+        imageBuffer = Buffer.concat(buffers);
+      });
+    });
+
+    busboy.on("finish", async () => {
+      try {
+        if (!imageBuffer) {
+          return res.status(400).json({
+            success: false,
+            message: "Image is required",
+          });
+        }
+
+        // Compress + resize
+        const processedImage = await sharp(imageBuffer)
+          .webp({ quality: 90 })
+          .resize({ width: 1200 })
+          .toBuffer();
+
+        const fileName = `color-chart/color-chart-${Date.now()}.webp`;
+
+        const s3Res = await storeFileInS3(processedImage, fileName);
+
+        // ✅ FIX: null check (TypeScript + runtime safe)
+        if (!s3Res) {
+          return res.status(500).json({
+            success: false,
+            message: "S3 upload failed",
+          });
+        }
+
+        const chart = new ColorChart();
+        chart.imageUrl = getFullUrl(s3Res.fileName);
+
+        await colorChartRepo.save(chart);
+
+        return res.json({
+          success: true,
+          message: "Color chart uploaded",
+          imageUrl: chart.imageUrl,
+        });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+          success: false,
+          message: "Upload failed",
+        });
+      }
+    });
+
+req.pipe(busboy);
   }
-
-  const chart = new ColorChart();
-  chart.imageUrl = `${req.protocol}://${req.get("host")}/static/settings/${req.file.filename}`;
-  await colorChartRepo.save(chart);
-
-  res.json({
-    success: true,
-    msg: "Color chart updated successfully",
-    imageUrl: chart.imageUrl,
-  });
-});
+);
 
 export default router;

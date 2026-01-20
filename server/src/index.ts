@@ -1,3 +1,4 @@
+
 /**
  * Index file for the server application for Rani fashions
  * @dev Written by WEB DEV TEAM - YMTS INDIA
@@ -108,17 +109,12 @@ app.use(express.urlencoded({ limit: "20mb", extended: true }));
 
 // Middleware Setup
 
-// ✅ UPDATED CORS FOR LIVE PRODUCTION
 app.use(
   cors({
-    origin: [
-      "https://www.chicandholland.com",
-      "https://chicandholland.com",
-      "http://localhost:3000"
-    ],
+    origin: "http://localhost:3000",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
   })  
 );  
 
@@ -145,6 +141,15 @@ app.use("/uploads/ppt", express.static("uploads/ppt"));
     }
     
     await db.initialize();
+
+if (process.env.RUN_SEEDER === "true") {
+  try {
+    await initializeData();
+  } catch (e) {
+    console.error("Seeder error (ignored in prod):", e);
+  }
+}
+
     await initializeData(); // seed countries/currencies if needed
     
     app.listen(port, () => {
