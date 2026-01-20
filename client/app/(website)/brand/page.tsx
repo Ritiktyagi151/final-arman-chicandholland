@@ -194,6 +194,7 @@ export default function BrandPage() {
           >
             <h2 className="font-adornstoryserif text-4xl text-[#C9A39A] 3xl:text-3xl 4xl:text-5xl">
               CRAFTMANSHIP
+              
             </h2>
             <p
                   style={{ wordSpacing: "4px" }}
@@ -232,6 +233,7 @@ export default function BrandPage() {
           >
             <h2 className="font-adornstoryserif text-4xl mb-4 text-[#C9A39A] 3xl:text-3xl 4xl:text-5xl">
               OFFICIAL SPONSOR
+              
             </h2>
               <p
                   style={{ wordSpacing: "4px" }}
@@ -243,6 +245,13 @@ export default function BrandPage() {
                   celebrities.
                 </p>
           </div>
+
+            <div className="overflow-hidden  mb-8 md:mb-12">
+                <h3 className="text-center font-adornstoryserif pb-3  text-3xl md:text-4xl text-[#C9A39A]  mb-4 transform transition-all duration-1000">
+                  Worn By Icons
+                  <span className="absolute bottom-0 left-1/2 h-[1.5px] w-40 -translate-x-1/2 bg-gradient-to-r from-transparent via-[#C9A39A] to-transparent"></span>
+                </h3>
+              </div>
 
           {/* Sponsors */}
           <div
@@ -259,7 +268,7 @@ export default function BrandPage() {
       <header className="pattern-bg py-16 md:py-12 mb-8 md:mb-10 text-center section-fade reveal-on-scroll rounded-3xl mx-4">
   <div className="overflow-hidden px-4">
     {/* Heading with relative position to anchor the line */}
-    <h1 className="relative pb-6 font-adornstoryserif text-3xl md:text-5xl lg:text-6xl bg-gradient-to-r from-primary via-white to-primary bg-clip-text text-transparent transform transition-all duration-1000 leading-tight">
+    <h1 className="relative pb-3 font-adornstoryserif text-3xl md:text-5xl lg:text-6xl bg-gradient-to-r from-primary via-white to-primary bg-clip-text text-transparent transform transition-all duration-1000 leading-tight">
       DISCOVER THE AESTHETIC OF THE HOUSE
       
       {/* Premium Gradient Underline */}

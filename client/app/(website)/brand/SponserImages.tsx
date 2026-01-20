@@ -11,6 +11,7 @@ import React from "react";
 const SponserImages = ({ sponsor }: any) => {
 
   return (
+    
     <Carousel
       opts={{
         loop: true,
@@ -39,7 +40,7 @@ const SponserImages = ({ sponsor }: any) => {
             </CarouselItem>
           ))}
       </CarouselContent> */}
-
+       
       <CarouselContent>
         {sponsor &&
           sponsor.map((item: any, index: number) => (

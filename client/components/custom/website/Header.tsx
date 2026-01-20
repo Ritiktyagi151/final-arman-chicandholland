@@ -71,7 +71,7 @@ const Header = async () => {
                 <MenubarItem className="!w-full" asChild>
                   <Link
                     href={"/"}
-                    className="font-helveticaneuemedium w-full text-xl font-black text-[#C9A39A]"
+                    className="font-brandon w-full text-xl  text-[#C9A39A]"
                   >
                     HOME
                   </Link>
@@ -79,7 +79,7 @@ const Header = async () => {
                 <MenubarItem className="!w-full" asChild>
                   <Link
                     href={"/brand"}
-                    className="font-helveticaneuemedium text-xl font-black text-[#C9A39A]"
+                    className="font-brandon text-xl  text-[#C9A39A]"
                   >
                     BRAND
                   </Link>
@@ -88,7 +88,7 @@ const Header = async () => {
                 <Collapsible>
                   <CollapsibleTrigger asChild>
                     <Button className="w-full !bg-transparent !px-[6px] !py-0 !text-start">
-                      <p className="font-helveticaneuemedium w-full !p-0 text-start text-xl font-black text-[#C9A39A]">
+                      <p className="font-brandon w-full !p-0 text-start text-xl  text-[#C9A39A]">
                         COLLECTIONS
                       </p>
                     </Button>
@@ -146,7 +146,7 @@ const Header = async () => {
                 <MenubarItem className="!w-full" asChild>
                   <Link
                     href={"/shows-and-events"}
-                    className="font-helveticaneuemedium text-xl font-black text-[#C9A39A]"
+                    className="font-brandon text-xl  text-[#C9A39A]"
                   >
                     SHOW/EVENTS
                   </Link>
@@ -154,7 +154,7 @@ const Header = async () => {
                 <MenubarItem className="!w-full" asChild>
                   <Link
                     href={"/contact-us"}
-                    className="font-helveticaneuemedium text-xl font-black text-[#C9A39A]"
+                    className="font-brandon text-xl  text-[#C9A39A]"
                   >
                     CONTACT US
                   </Link>
@@ -162,7 +162,7 @@ const Header = async () => {
                 <MenubarItem className="!w-full" asChild>
                   <Link
                     href={"/find-a-store"}
-                    className="font-helveticaneuemedium text-xl font-black text-[#C9A39A]"
+                    className="font-brandon text-xl  text-[#C9A39A]"
                   >
                     FIND A STORE
                   </Link>
@@ -170,7 +170,7 @@ const Header = async () => {
                 <MenubarItem className="!w-full" asChild>
                   <Link
                     href={"/size-chart"}
-                    className="font-helveticaneuemedium text-xl font-black text-[#C9A39A]"
+                    className="font-brandon text-xl  text-[#C9A39A]"
                   >
                     SIZE CHART
                   </Link>
@@ -179,7 +179,7 @@ const Header = async () => {
                   <MenubarItem className="!w-full" asChild>
                     <Link
                       href={"/become-a-retailer"}
-                      className="font-helveticaneuemedium text-xl font-black text-[#C9A39A]"
+                      className="font-brandon text-xl  text-[#C9A39A]"
                     >
                       BECOME A RETAILER
                     </Link>
@@ -240,7 +240,7 @@ const Header = async () => {
               <NavigationMenuItem>
                 <Link href={"/"} legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} font-helveticaneuemedium font-black`}
+                    className={`${navigationMenuTriggerStyle()} font-brandon  `}
                   >
                     HOME
                   </NavigationMenuLink>
@@ -249,7 +249,7 @@ const Header = async () => {
               <NavigationMenuItem>
                 <Link href={"/brand"} legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} font-helveticaneuemedium font-black`}
+                    className={`${navigationMenuTriggerStyle()} font-brandon `}
                   >
                     BRAND
                   </NavigationMenuLink>
@@ -257,7 +257,7 @@ const Header = async () => {
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuTrigger>
-                  <p className="attention font-helveticaneuemedium font-black">
+                  <p className="attention font-brandon">
                     COLLECTIONS
                   </p>
                 </NavigationMenuTrigger>
@@ -291,7 +291,7 @@ const Header = async () => {
               <NavigationMenuItem>
                 <Link href={"/shows-and-events"} legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} font-helveticaneuemedium font-black`}
+                    className={`${navigationMenuTriggerStyle()} font-brandon`}
                   >
                     SHOW/EVENTS
                   </NavigationMenuLink>
@@ -300,7 +300,7 @@ const Header = async () => {
               <NavigationMenuItem>
                 <Link href={"/contact-us"} legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} font-helveticaneuemedium font-black`}
+                    className={`${navigationMenuTriggerStyle()} font-brandon`}
                   >
                     CONTACT US
                   </NavigationMenuLink>
@@ -309,7 +309,7 @@ const Header = async () => {
               <NavigationMenuItem>
                 <Link href={"/find-a-store"} legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} font-helveticaneuemedium font-black`}
+                    className={`${navigationMenuTriggerStyle()} font-brandon`}
                   >
                     FIND A STORE
                   </NavigationMenuLink>
@@ -318,7 +318,7 @@ const Header = async () => {
               <NavigationMenuItem>
                 <Link href={"/size-chart"} legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} font-helveticaneuemedium font-black`}
+                    className={`${navigationMenuTriggerStyle()} font-brandon`}
                   >
                     SIZE CHART
                   </NavigationMenuLink>
@@ -329,7 +329,7 @@ const Header = async () => {
                 <NavigationMenuItem>
                   <Link href={"/become-a-retailer"} legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} font-helveticaneuemedium font-black`}
+                      className={`${navigationMenuTriggerStyle()} font-brandon`}
                     >
                       BECOME A RETAILER
                     </NavigationMenuLink>
