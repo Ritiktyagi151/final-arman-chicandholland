@@ -75,11 +75,11 @@ export default async function CollectionProducts(props: {
       />
 
       {/* Heading placed on the page as requested */}
-      <h1 className="z-[2] text-center mt-2 mb-2 font-adornstoryserif text-3xl font-bold tracking-wide text-white">
+      <h1 className="z-[2] text-center mt-3 mb-1 font-adornstoryserif text-3xl font-bold tracking-wide text-black">
         {categoryName}
       </h1>
 
-      <div className="mx-8 mt-10 flex flex-col gap-2">
+      <div className="mx-8 mt-8 flex flex-col gap-2">
         {/* Server-rendered initial products with videos */}
         {initialGroups.map((group, i) => (
           <div
