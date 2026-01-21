@@ -61,9 +61,9 @@ const TopSection = ({
         />
       )}
 
-<h1 className="z-[2] text-center font-adornstoryserif text-3xl font-bold tracking-wide text-white">
+{/* <h1 className="z-[2] text-center font-adornstoryserif text-3xl font-bold tracking-wide text-white">
         {name}
-      </h1>
+      </h1> */}
     </section>
   );
 };

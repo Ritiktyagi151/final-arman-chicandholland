@@ -27,11 +27,8 @@ export default async function CollectionProducts(props: {
   const allProductData = await getProducts({
     categoryId,
     subCategoryId,
-    // currencyId: 1, // EUR as default
     ...(currencyId ? { currencyId: parseInt(currencyId) } : {}),
   });
-
-  console.log(allProductData);
 
   // Error handling for empty data
   if (
@@ -66,15 +63,21 @@ export default async function CollectionProducts(props: {
     );
   }
 
-  console.log(initialGroups)
+  // Get the category name for the heading
+  const categoryName = allProductData.categoryDetails?.name || "";
 
   return (
     <div>
       {/* Hero section */}
       <TopSection
-        name={allProductData.categoryDetails?.name || ""}
+        name={categoryName}
         subCategoryId={subCategoryId}
       />
+
+      {/* Heading placed on the page as requested */}
+      <h1 className="z-[2] text-center mt-2 mb-2 font-adornstoryserif text-3xl font-bold tracking-wide text-white">
+        {categoryName}
+      </h1>
 
       <div className="mx-8 mt-10 flex flex-col gap-2">
         {/* Server-rendered initial products with videos */}
