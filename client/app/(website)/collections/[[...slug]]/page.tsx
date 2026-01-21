@@ -113,7 +113,7 @@ export default async function CollectionProducts(props: {
 
         {/* Server-rendered initial products without videos */}
         {initialProductsWithoutVideo.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 lg:grid-cols-4">
             {initialProductsWithoutVideo.map((product: any) => (
               <ProductCard
                 key={`server-product-no-video-${product.id}`}
