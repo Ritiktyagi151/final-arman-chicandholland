@@ -30,7 +30,7 @@ const NavigationMenuList = React.forwardRef<
   <NavigationMenuPrimitive.List
     ref={ref}
     className={cn(
-      "group flex flex-1 list-none items-center justify-center space-x-1",
+      "group flex flex-1 list-none items-center justify-center space-x-0",
       className,
     )}
     {...props}
@@ -46,7 +46,7 @@ const NavigationMenuItem = NavigationMenuPrimitive.Item;
  * animation (.nav-link::after) ko mimic karte hain.
  */
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm smd:text-xs xl:text-base 2xl:text-xl 3xl:text-3xl 4xl:text-3xl font-small text-[#C9A39A] transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 uppercase relative whitespace-nowrap " +
+  "group inline-flex h-6 w-max items-center justify-center rounded-md px-3 py-2 text-sm md:text-[14px]  2xl:text-[17px] 3xl:text-3xl 4xl:text-3xl font-medium text-[#C9A39A] transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 uppercase relative whitespace-nowrap" +
   // Hover Underline Effect (after elements)
   "after:content-[''] after:absolute after:w-full after:h-[1px] after:bottom-[-4px] after:left-0 after:bg-[#d1d5db] " +
   "after:scale-x-0 after:origin-bottom-right after:transition-transform after:duration-300 after:ease-out " +
@@ -124,7 +124,7 @@ const NavigationMenuIndicator = React.forwardRef<
     )}
     {...props}
   >
-    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
+    <div className="relative top-[60%]  h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
   </NavigationMenuPrimitive.Indicator>
 ));
 NavigationMenuIndicator.displayName =

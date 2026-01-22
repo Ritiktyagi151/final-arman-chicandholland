@@ -59,7 +59,7 @@ const Header = async () => {
 
   return (
     <div className="sticky top-0 z-10 h-[90px] max-h-[120px] w-full bg-background shadow-md lg:h-[120px] 2xl:h-[120px] 2xl:max-h-[120px] 3xl:h-[125px] 3xl:max-h-[150px] 4xl:h-[150px] 4xl:max-h-[150px]">
-      <header className="flex h-[120px] flex-row items-center justify-around bg-black md:justify-between md:px-[2rem] lg:flex-col 3xl:h-[150px]">
+      <header className="flex h-[130px] flex-row items-center justify-around bg-black md:justify-between md:px-[2rem] lg:flex-col 3xl:h-[150px]">
         {/* tablet/mobile view */}
         <div className="lg:hidden">
           <Menubar className="border-none bg-black p-0 text-[#C9A39A]">
@@ -229,13 +229,13 @@ const Header = async () => {
           <img
             src="https://ymts.blr1.cdn.digitaloceanspaces.com/chicandholland/Brand_New/logo.png"
             alt="Chic & Holland"
-            className="w-[110px] md:w-[75px] 2xl:w-[77px] 3xl:w-[100px] 4xl:w-[105px]"
+            className="w-[110px] md:w-[75px] 2xl:w-[80px] 3xl:w-[100px] 4xl:w-[105px]"
           />
         </Link>
 
-        <div className="flex items-center gap-6 pb-2 4xl:pb-5">
+        <div className="flex items-center  gap-6 pb-2 4xl:pb-5">
           {/* desktop view */}
-          <NavigationMenu className="hidden lg:flex">
+          <NavigationMenu className="hidden  lg:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
                 <Link href={"/"} legacyBehavior passHref>

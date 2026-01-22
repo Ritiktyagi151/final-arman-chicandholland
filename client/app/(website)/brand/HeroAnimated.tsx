@@ -17,7 +17,7 @@ export default function HeroAnimated() {
   }, []);
 
   return (
-    <section className="bg-black min-h-screen flex items-center justify-center py-10 md:py-20 overflow-hidden relative">
+    <section className="bg-black min-h-screen flex items-center justify-center py-10  overflow-hidden relative">
       {/* ✨ Floating Spark Particle Layer */}
       <div className="absolute inset-0 pointer-events-none particle-ambient"></div>
 

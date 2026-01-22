@@ -1,12 +1,11 @@
 @import "swiper/css";
 @import "swiper/css/navigation";
 @import "swiper/css/pagination";
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 @layer base {
   :root {
@@ -175,19 +174,19 @@
   color: #fff;
   text-shadow:
     -1px 0 0 rgba(0, 0, 0, 0.6),
-     1px 0 0 rgba(0, 0, 0, 0.6),
-     0 -1px 0 rgba(0, 0, 0, 0.6),
-     0  1px 0 rgba(0, 0, 0, 0.6);
+    1px 0 0 rgba(0, 0, 0, 0.6),
+    0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(0, 0, 0, 0.6);
 }
 .font-premium-bold {
   text-shadow:
-    0 0.7px 1px rgba(0, 0, 0, 0.30),
-    0 1px 2px rgba(0, 0, 0, 0.20);
+    0 0.7px 1px rgba(0, 0, 0, 0.3),
+    0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Luxury Brand Page Styles */
 .luxury-brand-page {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: "Cormorant Garamond", serif;
 }
 
 /* Hero Section */
@@ -314,13 +313,13 @@
 }
 
 .luxury-underline::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -8px;
   left: 0;
   width: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #C9A39A, transparent);
+  background: linear-gradient(90deg, transparent, #c9a39a, transparent);
   transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -332,19 +331,20 @@
 .scroll-indicator {
   width: 1px;
   height: 60px;
-  background: linear-gradient(to bottom, #C9A39A, transparent);
+  background: linear-gradient(to bottom, #c9a39a, transparent);
   position: relative;
 }
 
 .scroll-line {
   width: 1px;
   height: 30px;
-  background: #C9A39A;
+  background: #c9a39a;
   animation: scrollLine 2s ease-in-out infinite;
 }
 
 @keyframes scrollLine {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
     opacity: 0;
   }
@@ -384,9 +384,9 @@
 .luxury-nav-btn {
   width: 50px;
   height: 50px;
-  border: 1px solid #C9A39A;
+  border: 1px solid #c9a39a;
   background: transparent;
-  color: #C9A39A;
+  color: #c9a39a;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -396,7 +396,7 @@
 }
 
 .luxury-nav-btn:hover {
-  background: #C9A39A;
+  background: #c9a39a;
   color: black;
   transform: scale(1.1);
 }
@@ -408,7 +408,7 @@ html {
 
 /* Custom Selection */
 ::selection {
-  background: #C9A39A40;
+  background: #c9a39a40;
   color: inherit;
 }
 /* Luxury Contact Page Styles */
@@ -463,7 +463,7 @@ html {
 .grid-pattern {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(rgba(135, 99, 85, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(135, 99, 85, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
@@ -472,7 +472,7 @@ html {
 
 /* Luxury Title */
 .luxury-title {
-  background: linear-gradient(135deg, #ffffff 0%, #C9A39A 50%, #ffffff 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #c9a39a 50%, #ffffff 100%);
   background-size: 200% 200%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -486,21 +486,25 @@ html {
 }
 
 .luxury-line::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, #C9A39A, transparent);
+  background: linear-gradient(90deg, transparent, #c9a39a, transparent);
   animation: slideLine 2s ease-in-out 0.5s forwards;
 }
 
 /* Contact Cards */
 .luxury-contact-card {
   position: relative;
-  background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1rem;
   backdrop-filter: blur(10px);
@@ -513,8 +517,8 @@ html {
 .luxury-contact-card:hover {
   transform: translateY(-8px);
   border-color: rgba(201, 163, 154, 0.3);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.3),
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(201, 163, 154, 0.1);
 }
 
@@ -532,8 +536,8 @@ html {
   align-items: center;
   justify-content: center;
   margin-bottom: 0.5rem;
-  
-  color: #C9A39A;
+
+  color: #c9a39a;
   transition: all 0.3s ease;
 }
 
@@ -543,7 +547,7 @@ html {
 }
 
 .card-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.2rem;
   color: white;
   margin-bottom: 1rem;
@@ -551,7 +555,7 @@ html {
 }
 
 .card-text {
-  color: #C9A39A;
+  color: #c9a39a;
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
 }
@@ -561,20 +565,20 @@ html {
 }
 
 .email-link {
-  color: #C9A39A;
+  color: #c9a39a;
   text-decoration: none;
   transition: all 0.3s ease;
   position: relative;
 }
 
 .email-link::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -2px;
   left: 0;
   width: 0;
   height: 1px;
-  background: #C9A39A;
+  background: #c9a39a;
   transition: width 0.3s ease;
 }
 
@@ -611,7 +615,7 @@ html {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(201, 163, 154, 0.1);
 }
@@ -642,7 +646,7 @@ html {
 .video-frame {
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   pointer-events: none;
 }
@@ -654,13 +658,13 @@ html {
 }
 
 .form-header {
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 2rem;
 }
 
 .luxury-contact-form {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 2.5rem;
   backdrop-filter: blur(10px);
@@ -683,8 +687,8 @@ html {
 .luxury-input,
 .luxury-phone-input,
 .luxury-textarea {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   color: white;
   padding: 0.75rem 1rem;
@@ -696,18 +700,18 @@ html {
 .luxury-phone-input:focus,
 .luxury-textarea:focus {
   outline: none;
-  border-color: #C9A39A;
-  background: rgba(255,255,255,0.08);
+  border-color: #c9a39a;
+  background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 0 3px rgba(201, 163, 154, 0.1);
 }
 
 .luxury-input::placeholder,
 .luxury-textarea::placeholder {
-  color: rgba(255,255,255,0.4);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .luxury-form-description {
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.8rem;
   margin-top: 0.25rem;
 }
@@ -720,7 +724,7 @@ html {
 
 /* Submit Button */
 .luxury-submit-btn {
-  background: linear-gradient(135deg, #C9A39A, #876355);
+  background: linear-gradient(135deg, #c9a39a, #876355);
   border: none;
   border-radius: 8px;
   padding: 1rem 2rem;
@@ -733,7 +737,7 @@ html {
 
 .luxury-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 10px 25px rgba(201, 163, 154, 0.3),
     0 0 0 1px rgba(201, 163, 154, 0.2);
 }
@@ -771,34 +775,64 @@ html {
 
 /* Animations */
 @keyframes float-slow {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-20px) translateX(10px); }
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+  }
 }
 
 @keyframes float-medium {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-15px) scale(1.05); }
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.05);
+  }
 }
 
 @keyframes float-fast {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-10px) rotate(120deg); }
-  66% { transform: translateY(10px) rotate(240deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(10px) rotate(240deg);
+  }
 }
 
 @keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @keyframes slideLine {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive Design */
@@ -806,11 +840,11 @@ html {
   .luxury-contact-form {
     padding: 1.5rem;
   }
-  
+
   .luxury-contact-card {
     padding: 1.5rem;
   }
-  
+
   .luxury-contact-video {
     height: 400px;
   }
@@ -833,7 +867,11 @@ html {
 .floating-orb {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(135, 99, 85, 0.08) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(135, 99, 85, 0.08) 0%,
+    transparent 70%
+  );
   animation-duration: 20s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
@@ -867,7 +905,7 @@ html {
 .grid-pattern {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(rgba(135, 99, 85, 0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(135, 99, 85, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -890,7 +928,7 @@ html {
 }
 
 .luxury-line::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -909,7 +947,7 @@ html {
   background: white;
   border-radius: 20px;
   padding: 2.5rem;
-  box-shadow: 
+  box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.08),
     0 0 0 1px rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(135, 99, 85, 0.1);
@@ -921,7 +959,7 @@ html {
 
 .luxury-search-card:hover {
   transform: translateY(-5px);
-  box-shadow: 
+  box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.12),
     0 0 0 1px rgba(135, 99, 85, 0.15);
 }
@@ -934,7 +972,7 @@ html {
 .search-icon {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #876355, #C9A39A);
+  background: linear-gradient(135deg, #876355, #c9a39a);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -949,7 +987,7 @@ html {
 }
 
 .search-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.75rem;
   color: #1a0f0b;
   margin-bottom: 0.5rem;
@@ -990,7 +1028,7 @@ html {
 }
 
 .stat-number {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.5rem;
   font-weight: 600;
   color: #876355;
@@ -1013,7 +1051,7 @@ html {
   background: white;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.08),
     0 0 0 1px rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(135, 99, 85, 0.1);
@@ -1023,7 +1061,7 @@ html {
 
 .luxury-map-card:hover {
   transform: translateY(-5px);
-  box-shadow: 
+  box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.12),
     0 0 0 1px rgba(135, 99, 85, 0.15);
 }
@@ -1034,7 +1072,7 @@ html {
 }
 
 .map-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.5rem;
   color: #1a0f0b;
   margin-bottom: 0.5rem;
@@ -1107,7 +1145,7 @@ html {
   border-radius: 16px;
   padding: 2rem;
   text-align: center;
-  box-shadow: 
+  box-shadow:
     0 5px 20px rgba(0, 0, 0, 0.05),
     0 0 0 1px rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(135, 99, 85, 0.1);
@@ -1116,7 +1154,7 @@ html {
 
 .info-card:hover {
   transform: translateY(-8px);
-  box-shadow: 
+  box-shadow:
     0 15px 40px rgba(0, 0, 0, 0.1),
     0 0 0 1px rgba(135, 99, 85, 0.15);
 }
@@ -1124,7 +1162,7 @@ html {
 .info-icon {
   width: 70px;
   height: 70px;
-  background: linear-gradient(135deg, #876355, #C9A39A);
+  background: linear-gradient(135deg, #876355, #c9a39a);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -1139,7 +1177,7 @@ html {
 }
 
 .info-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.25rem;
   color: #1a0f0b;
   margin-bottom: 1rem;
@@ -1154,29 +1192,55 @@ html {
 
 /* Animations */
 @keyframes float-slow {
-  0%, 100% { transform: translateY(0px) translateX(0px); }
-  50% { transform: translateY(-15px) translateX(8px); }
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-15px) translateX(8px);
+  }
 }
 
 @keyframes float-medium {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-10px) scale(1.03); }
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.03);
+  }
 }
 
 @keyframes float-fast {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-8px) rotate(120deg); }
-  66% { transform: translateY(8px) rotate(240deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-8px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(8px) rotate(240deg);
+  }
 }
 
 @keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @keyframes slideLine {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 /* Responsive Design */
@@ -1185,7 +1249,7 @@ html {
   .luxury-map-card {
     padding: 2rem;
   }
-  
+
   .store-stats {
     grid-template-columns: 1fr;
     gap: 0.75rem;
@@ -1196,16 +1260,16 @@ html {
   .luxury-title {
     font-size: 2.5rem;
   }
-  
+
   .luxury-search-card,
   .luxury-map-card {
     padding: 1.5rem;
   }
-  
+
   .quick-actions {
     flex-direction: column;
   }
-  
+
   .luxury-info-grid {
     grid-template-columns: 1fr;
   }
@@ -1311,7 +1375,7 @@ html {
 }
 
 .benefits-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.25rem;
   color: #1a0f0b;
   margin-bottom: 1rem;
@@ -1357,7 +1421,7 @@ html {
 }
 
 .content-main-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.75rem;
   color: #1a0f0b;
   line-height: 1.3;
@@ -1403,7 +1467,7 @@ html {
 }
 
 .form-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.5rem;
   color: #1a0f0b;
   margin-bottom: 0.5rem;
@@ -1448,7 +1512,7 @@ html {
 }
 
 .stat-number {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 2rem;
   font-weight: 600;
   color: #876355;
@@ -1567,8 +1631,12 @@ html {
 
 /* Animations */
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive Design */
@@ -1576,7 +1644,7 @@ html {
   .content-main-title {
     font-size: 1.5rem;
   }
-  
+
   .luxury-retailer-video {
     height: 400px;
   }
@@ -1587,11 +1655,11 @@ html {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .form-container {
     padding: 1.5rem;
   }
-  
+
   .content-card {
     padding: 0;
   }
@@ -1603,7 +1671,10 @@ html {
   }
 }
 .floating-frame {
-  transition: transform 0.6s ease, box-shadow 0.6s ease, filter 0.6s ease;
+  transition:
+    transform 0.6s ease,
+    box-shadow 0.6s ease,
+    filter 0.6s ease;
 }
 .floating-frame:hover {
   transform: scale(1.05);
