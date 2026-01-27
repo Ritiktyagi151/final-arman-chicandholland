@@ -36,7 +36,7 @@ export default function Footer() {
         </div>
 
         {/* --- MIDDLE LOGO --- */}
-        <div className="mt-12 mb-4">
+        <div className="mb-4">
           <Link href = "/">
           <img
             src="https://chicandholland-space.ams3.cdn.digitaloceanspaces.com/brand_page/CH%20Monogram_Rose%20Gold.png"
