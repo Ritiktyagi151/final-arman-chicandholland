@@ -3712,8 +3712,7 @@ router.patch(
     for (let index = 0; index < data.length; index++) {
       const fav = await Favourites.findOne({
         where: {
-          id: Number(data[index].id), 
-          
+          id: Number(data[index].id),
         },
       });
       if (!fav) {
