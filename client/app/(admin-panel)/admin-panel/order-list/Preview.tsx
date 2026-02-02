@@ -21,7 +21,7 @@ import { convertWebPToJPG } from "../request/StockAcceptedForm";
 import useHttp from "@/lib/hooks/usePost";
 import { toast } from "sonner";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
-import FreshOrderPdf from "../request/FreshOrderPdf";
+import RetailerPdf from "../request/RetailerPdf";
 
 const Preview = ({
   id,
@@ -186,7 +186,7 @@ barcode: item.barcode,
 
             <div className="flex justify-end py-3">
               <PDFDownloadLink
-                document={<FreshOrderPdf orderData={data} />}
+                document={<RetailerPdf orderData={data} />}
                 fileName={`${data.purchaseOrderNo}.pdf`}
               >
                 <Button className="bg-blue-600 text-white">Download PDF</Button>
@@ -194,7 +194,7 @@ barcode: item.barcode,
             </div>
 
             <PDFViewer className="mt-4 h-[75vh] w-full" showToolbar={false}>
-              <FreshOrderPdf orderData={data} />
+              <RetailerPdf orderData={data} />
             </PDFViewer>
           </>
         )}
