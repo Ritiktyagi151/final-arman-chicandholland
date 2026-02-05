@@ -51,7 +51,7 @@ export default function ShowsAndEvents() {
       `}</style>
 
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center text-black mb-4 font-adornstoryserif">Shows & Events</h1>
+        <h1 className="text-3xl font-bold text-center mt-3 md:mt-0 text-black mb-4 font-adornstoryserif">Shows & Events</h1>
         <p className="text-center text-xl font-mysi text-black max-w-2xl mx-auto mb-12">
           Discover our upcoming fashion shows and events around the world. Hover over the cards to see preview images.
         </p>

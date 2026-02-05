@@ -79,7 +79,7 @@ export default async function CollectionProducts(props: {
         {categoryName}
       </h1>
 
-      <div className="mx-8 mt-8 flex flex-col gap-2">
+      <div className="mx-8 mb-8 mt-8 flex flex-col gap-2">
         {/* Server-rendered initial products with videos */}
         {initialGroups.map((group, i) => (
           <div

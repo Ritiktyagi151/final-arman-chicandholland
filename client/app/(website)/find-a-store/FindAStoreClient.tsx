@@ -47,7 +47,7 @@ export default function FindAStoreClient({ clientsData }) {
     <div className="w-full bg-gradient-to-br from-slate-50 to-gray-50 min-h-screen">
 
       {/* HEADER SECTION */}
-      <div className="pt-2 pb-2 text-center bg-white/80 backdrop-blur-sm shadow-sm">
+      <div className="pt-2 pb-2 text-center bg-white/80 backdrop-blur-sm mt-5 md:mt-2 shadow-sm">
         <div className="max-w-2xl mx-auto px-4">
 <h1 className="text-4xl font-bold tracking-tight font-adornstoryserif text-[40px] md:text-[40px] leading-[1.3] tracking-[0.4px] text-black mb-0 animated-text-block max-w-[95%] mt-1">
             OUR RETAILERS

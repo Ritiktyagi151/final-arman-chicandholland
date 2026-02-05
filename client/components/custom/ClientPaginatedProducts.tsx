@@ -97,7 +97,7 @@ export default function ClientPaginatedProducts({
         <div
           key={`client-group-${i}`}
           className={cn(
-            "grid grid-cols-1 gap-4",
+            "grid grid-cols-1 gap-2",
             group.video
               ? "lg:grid-cols-3 lg:grid-rows-2"
               : "lg:grid-cols-4 lg:grid-rows-1",
@@ -124,7 +124,7 @@ export default function ClientPaginatedProducts({
 
       {/* Additional products without videos (client-rendered) */}
       {additionalProductsWithoutVideo.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-2 lg:grid-cols-4">
           {additionalProductsWithoutVideo.map((product) => (
             <ProductCard
               key={`client-product-no-video-${product.id}`}
