@@ -101,7 +101,7 @@ const FreshOrderPdf = ({ orderData }: { orderData: any }) => {
                     <View style={styles.leftMergedContainer}>
                       <View style={styles.sizeHeaderCell}>
                         <Text style={styles.headerText}>
-                          Size ({orderData.details[0]?.size_country})
+                          Size (EU)
                         </Text>
                       </View>
                       <View style={styles.sizeDataCell}>
@@ -113,6 +113,7 @@ const FreshOrderPdf = ({ orderData }: { orderData: any }) => {
 </Text>
 
 {/* ${item.size_country} */}
+{/* {orderData.details[0]?.size_country} */}
 
 
                       </View>

@@ -48,13 +48,15 @@ export default function ColorChartAdmin() {
       <h1 className="text-xl font-bold">Color Chart Manager</h1>
 
       {url && (
-        <Image
-          src={url}
-          alt="Color Chart"
-          width={500}
-          height={600}
-          className="rounded border"
-        />
+       <Image
+  src={url}
+  alt="Color Chart"
+  width={1200}
+  height={800}
+  className="w-full max-w-[600px] h-auto object-contain rounded border"
+  unoptimized
+/>
+
       )}
 
       <Input

@@ -7,7 +7,11 @@ import { storeFileInS3, getFullUrl } from "../lib/s3";
 
 const router = Router();
 const colorChartRepo = db.getRepository(ColorChart);
-router.get("/", async (req: Request, res: Response) => {
+
+/**
+ * GET LATEST COLOR CHART
+ */
+router.get("/", async (_req: Request, res: Response) => {
   try {
     const charts = await colorChartRepo.find({
       order: { id: "DESC" },
@@ -31,73 +35,82 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * UPLOAD COLOR CHART
+ * ✅ FIXES ROTATION (EXIF)
+ * ✅ COMPRESSES
+ * ✅ CONVERTS TO WEBP
+ */
+router.post("/upload", async (req: Request, res: Response) => {
+  const busboy = Busboy({ headers: req.headers });
+  let imageBuffer: Buffer | null = null;
 
-router.post(
-  "/upload",
-  async (req: Request, res: Response) => {
-    const busboy = Busboy({ headers: req.headers });
-    let imageBuffer: Buffer | null = null;
+  busboy.on("file", (_fieldname, file) => {
+    const buffers: Buffer[] = [];
 
-    busboy.on("file", (_fieldname, file) => {
-      const buffers: Buffer[] = [];
-
-      file.on("data", (data: Buffer) => {
-        buffers.push(data);
-      });
-
-      file.on("end", () => {
-        imageBuffer = Buffer.concat(buffers);
-      });
+    file.on("data", (data: Buffer) => {
+      buffers.push(data);
     });
 
-    busboy.on("finish", async () => {
-      try {
-        if (!imageBuffer) {
-          return res.status(400).json({
-            success: false,
-            message: "Image is required",
-          });
-        }
+    file.on("end", () => {
+      imageBuffer = Buffer.concat(buffers);
+    });
+  });
 
-        // Compress + resize
-        const processedImage = await sharp(imageBuffer)
-          .webp({ quality: 90 })
-          .resize({ width: 1200 })
-          .toBuffer();
-
-        const fileName = `color-chart/color-chart-${Date.now()}.webp`;
-
-        const s3Res = await storeFileInS3(processedImage, fileName);
-
-        // ✅ FIX: null check (TypeScript + runtime safe)
-        if (!s3Res) {
-          return res.status(500).json({
-            success: false,
-            message: "S3 upload failed",
-          });
-        }
-
-        const chart = new ColorChart();
-        chart.imageUrl = getFullUrl(s3Res.fileName);
-
-        await colorChartRepo.save(chart);
-
-        return res.json({
-          success: true,
-          message: "Color chart uploaded",
-          imageUrl: chart.imageUrl,
-        });
-      } catch (error) {
-        console.error(error);
-        return res.status(500).json({
+  busboy.on("finish", async () => {
+    try {
+      if (!imageBuffer) {
+        return res.status(400).json({
           success: false,
-          message: "Upload failed",
+          message: "Image is required",
         });
       }
-    });
 
-req.pipe(busboy);
-  }
-);
+      /**
+       * 🔥 MOST IMPORTANT FIX
+       * .rotate() reads EXIF orientation and fixes image permanently
+       */
+      const processedImage = await sharp(imageBuffer)
+        .rotate() // ✅ FIXES ULTA / SIDEWAYS IMAGE
+        .resize({
+          width: 1200,
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 90 })
+        .toBuffer();
+
+      const fileName = `color-chart/color-chart-${Date.now()}.webp`;
+
+      const s3Res = await storeFileInS3(processedImage, fileName);
+
+      if (!s3Res) {
+        return res.status(500).json({
+          success: false,
+          message: "S3 upload failed",
+        });
+      }
+
+      const chart = new ColorChart();
+      chart.imageUrl = getFullUrl(s3Res.fileName);
+
+      await colorChartRepo.save(chart);
+
+      return res.json({
+        success: true,
+        message: "Color chart uploaded successfully",
+        imageUrl: chart.imageUrl,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: "Upload failed",
+      });
+    }
+  });
+
+  req.pipe(busboy);
+});
 
 export default router;
+
