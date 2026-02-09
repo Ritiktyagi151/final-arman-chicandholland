@@ -58,14 +58,14 @@ const Stock = async (props: {
         <CustomSearchBar query={query} />
 
         {/* GRID */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 xl:grid-cols-5 gap-2">
+<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-2">
           {stock.stock?.map((item: any) => {
             if (!item.product) return null;
 
             return (
               <div
                 key={item.id}
-                className="flex flex-col rounded-md border shadow-sm hover:shadow-md p-[2px]"
+                className="flex flex-col rounded-md border shadow-sm hover:shadow-md p-[6px]"
               >
                 {/* IMAGE */}
                 <div className="aspect-[2/2] w-full overflow-hidden rounded-md">
@@ -75,7 +75,7 @@ const Stock = async (props: {
                 {/* DETAILS */}
                 <div className="flex flex-col flex-1 px-1 py-1 text-xs">
                   {/* QTY + PRICE */}
-                  <div className="mb-0 flex items-center justify-between">
+                  <div className="mb-6 flex items-center justify-between">
                     <span className="rounded bg-gray-100 px-1 py-[1px]">
                       Qty: {item.quantity}
                     </span>
