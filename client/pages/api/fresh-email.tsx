@@ -13,6 +13,7 @@ import {
 } from "@react-pdf/renderer";
 import dayjs from "dayjs";
 import Mail from "nodemailer/lib/mailer";
+import RetailerPdf from "@/app/(admin-panel)/admin-panel/request/RetailerPdf";
 
 type Response = {
   success: boolean;
@@ -50,7 +51,7 @@ export default async function handler(
 
   try {
     const { orderData } = req.body;
-    const pdf = await renderToBuffer(<FreshOrderPdf orderData={orderData} />);
+    const pdf = await renderToBuffer(<RetailerPdf orderData={orderData} />);
 
     const htmlContent = `
       <!DOCTYPE html>

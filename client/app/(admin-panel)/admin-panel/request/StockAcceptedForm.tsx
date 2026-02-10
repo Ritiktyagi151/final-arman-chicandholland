@@ -73,6 +73,7 @@ import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import Link from "next/link";
 import StockOrdersPdf from "./StockOrdersPdf";
 import FreshOrderPdf from "./FreshOrderPdf";
+import RetailerPdf from "./RetailerPdf";
 
 const StockAcceptedForm = ({ id }: { id: number }) => {
   const [open, setOpen] = useState(false);
@@ -83,12 +84,12 @@ const StockAcceptedForm = ({ id }: { id: number }) => {
     name: string;
   } | null>(null);
 
-  // const { executeAsync: fetchAsync } = useHttp(
-  //   "/api/stock-email",
-  //   "POST",
-  //   false,
-  //   true,
-  // );
+ const { executeAsync: mailex } = useHttp(
+  "/stock-email",
+  "POST",
+  true
+);
+
   const getLatestPurchaseOrder = async () => {
   const token = localStorage.getItem("token");
   if (!token) return null; // Prevent 401 crash
@@ -104,12 +105,7 @@ const StockAcceptedForm = ({ id }: { id: number }) => {
   return await res.json();
 };
 
-  const { executeAsync: fetchAsync } = useHttp(
-    "/api/manufacturer",
-    "POST",
-    false,
-    true,
-  );
+
 
   const { loading, error, executeAsync } = useHttp(
     "/retailer-orders/admin/accepted/stock-order",
@@ -430,16 +426,24 @@ useEffect(() => {
       form.setValue("total_amount", total);
     }, 200);
   };
+const StockEmail = async (preDatas: any) => {
+  try {
+    console.log("📧 MAIL TO →", preDatas.manufacturingEmailAddress);
 
-  const StockEmail = async (preDatas: any) => {
-    let res = await fetchAsync({ orderData: preDatas });
+    const res = await mailex({ orderData: preDatas });
 
-    if (res.success) {
+    if (res?.success) {
       toast.success("Email sent successfully");
     } else {
-      toast.error("Something went wrong");
+      toast.error("Mail API failed");
     }
-  };
+  } catch (err: any) {
+    console.error("❌ MAIL ERROR →", err);
+    toast.error("Mail failed", {
+      description: err?.message || "SMTP / API error",
+    });
+  }
+};
 
   // console.log(customers)
 
@@ -947,19 +951,21 @@ useEffect(() => {
 
 
     <div className="flex justify-end py-3">
-      <PDFDownloadLink
-        document={<FreshOrderPdf orderData={previewData} />}
-        fileName={`${previewData.purchaseOrderNo}.pdf`}
-      >
+     <PDFDownloadLink
+  document={<RetailerPdf orderData={previewData} />}
+  fileName={`${previewData.purchaseOrderNo}.pdf`}
+>
+
         <button className="rounded bg-blue-600 px-4 py-2 text-white shadow">
           Download PDF
         </button>
       </PDFDownloadLink>
     </div>
 
-    <PDFViewer className="mt-2 h-full w-full" showToolbar={false}>
-      <FreshOrderPdf orderData={previewData} />
-    </PDFViewer>
+   <PDFViewer className="mt-2 h-full w-full" showToolbar={false}>
+  <RetailerPdf orderData={previewData} />
+</PDFViewer>
+
   </>
 )}
 

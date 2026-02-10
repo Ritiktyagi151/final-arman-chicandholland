@@ -69,6 +69,7 @@ import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
 import FreshOrderPdf from "./FreshOrderPdf";
 import { convertWebPToJPG } from "./StockAcceptedForm";
+import RetailerPdf from "./RetailerPdf";
 const FreshOrdersAcceptedForm = ({
   customers,
   id,
@@ -86,12 +87,11 @@ const FreshOrdersAcceptedForm = ({
   const [previewData, setPreviewData] = useState<any>(null);
   const [total_state, setTotalState] = useState(0);
 
-  const { executeAsync: mailex } = useHttp(
-    "/api/manufacturer",
-    "POST",
-    false,
-    true,
-  );
+const { executeAsync: mailex } = useHttp(
+  "/stock-email",
+  "POST",
+  true
+);
 
   const { loading, error, executeAsync } = useHttp(
     "/retailer-orders/admin/accepted/favorites-order",
@@ -816,14 +816,21 @@ color: current.meshColor || current.customColor,
     }, 200);
   };
 
-  const FreshEmail = async (preData: any) => {
-    let res = await mailex({ orderData: preData });
-    if (res.success) {
-      toast.success("Email sent successfully");
-    } else {
-      toast.error("Something went wrong");
-    }
-  };
+const FreshEmail = async (preData: any) => {
+  try {
+    console.log("📧 MAIL TO →", preData.manufacturingEmailAddress);
+
+    await mailex({ orderData: preData });
+
+    toast.success("Manufacturer mail sent");
+  } catch (err: any) {
+    console.error("❌ MAIL ERROR →", err);
+    toast.error("Mail failed", {
+      description: err?.message || "Mail API error",
+    });
+  }
+};
+
 
   return (
     <div>
@@ -1567,9 +1574,9 @@ value={field.value || 0}
     {/* 🔹 Download Button */}
     <div className="flex justify-end py-3">
       <PDFDownloadLink
-        document={<FreshOrderPdf orderData={previewData} />}
-        fileName={`${previewData.purchaseOrderNo}.pdf`}
-      >
+  document={<RetailerPdf orderData={previewData} />}
+  fileName={`${previewData.purchaseOrderNo}.pdf`}
+>
         <button className="rounded bg-blue-600 px-4 py-2 text-white shadow">
           Download PDF
         </button>
@@ -1578,7 +1585,7 @@ value={field.value || 0}
 
     {/* 🔹 Live Preview */}
     <PDFViewer className="mt-2 h-full w-full" showToolbar={false}>
-      <FreshOrderPdf orderData={previewData} />
+      <RetailerPdf  orderData={previewData} />
     </PDFViewer>
   </>
 )}
