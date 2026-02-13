@@ -104,24 +104,19 @@ app.post(
   stripeWebhookHandler
 );
 
-app.use(express.json({ limit: "100mb" }));
-app.use(express.urlencoded({ limit: "100mb", extended: true }));
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ limit: "20mb", extended: true }));
 
 // Middleware Setup
 
 app.use(
   cors({
-    origin: [
-      "http://chicandholland.com",
-      "http://www.chicandholland.com",
-      "https://chicandholland.com",
-      "https://www.chicandholland.com"
-    ],
+    origin: "http://localhost:3000",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  })
-);
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
+  })  
+);  
 
 
 

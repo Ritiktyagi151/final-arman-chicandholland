@@ -62,7 +62,8 @@ const FreshOrderPdf = ({ orderData }: { orderData: any }) => {
                         <Text style={styles.headerText}>Color</Text>
                       </View>
                       <View style={styles.tableDataCell}>
-                        <Text style={styles.dataText}>{item.color}</Text>
+                        <Text style={styles.dataText}>{item.meshColor}
+</Text>
                       </View>
                     </View>
                     <View style={styles.rightSection}>
@@ -107,14 +108,13 @@ const FreshOrderPdf = ({ orderData }: { orderData: any }) => {
                       <View style={styles.sizeDataCell}>
                        <Text style={styles.dataText} wrap>
   {item.admin_us_size
-    ? `US ${item.admin_us_size} (${item.size_country} ${item.size})`
+    ? `EU ${item.admin_us_size} (${item.size_country} ${item.size})`
     : ` ${item.size}`  
   }
 </Text>
 
 {/* ${item.size_country} */}
-{/* {orderData.details[0]?.size_country} */}
-
+{/* ({orderData.details[0]?.size_country}) */}
 
                       </View>
                     </View>

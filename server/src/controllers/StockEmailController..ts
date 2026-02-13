@@ -202,10 +202,11 @@ slide.addImage({
 const pdfBuffer = await generateOrderPdf(orderData);
 
 
-   await mail({
-  to: orderData.manufacturingEmailAddress,
-  subject: orderData.purchaseOrderNo,
-  html: `
+  try {
+  await mail({
+    to: orderData.manufacturingEmailAddress,
+    subject: orderData.purchaseOrderNo,
+    html: `
     <div style="font-family: Arial, sans-serif; font-size:14px; color:#000;">
       <p>Hello,</p>
 
@@ -228,17 +229,22 @@ const pdfBuffer = await generateOrderPdf(orderData);
     </div>
   `,
   attachments: [
-    // {
-    //   filename: `${orderData.purchaseOrderNo}.pptx`,
-    //   content: buffer,
-    // },
-     {
-    filename: `${orderData.purchaseOrderNo}.pdf`,
-    content: pdfBuffer,
-  },
-  ],
-});
+      {
+        filename: `${orderData.purchaseOrderNo}.pdf`,
+        content: pdfBuffer,
+      },
+    ],
+  });
 
+  console.log("✅ MAIL SENT TO →", orderData.manufacturingEmailAddress);
+} catch (mailErr) {
+  console.error("❌ SMTP MAIL FAILED →", mailErr);
+
+  return res.status(500).json({
+    success: false,
+    message: "SMTP mail failed",
+  });
+}
 
     return res.json({ success: true, message: "Email sent with PPT" });
   } catch (error: any) {
