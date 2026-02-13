@@ -28,6 +28,18 @@ import { Button } from "@/components/ui/button";
 import OrderDetailsSheet from "./OrderDetails";
 import TableScrollWrapper from "@/components/TableScrollWrapper";
 
+// ✅ STATUS → DB FIELD MAPPING
+const statusToDbField: Record<string, string | null> = {
+  "Pattern": "pattern",
+  "Khaka": "khaka",
+  "Issue Beading": "issue_beading",
+  "Beading": "beading",
+  "Zarkan": "zarkan",
+  "Stitching": "stitching",
+  "Ready to Delivery": "ready_to_delivery",
+  "Shipped": "shipped",
+  "Balance Pending": null,
+};
 
 const OrdersPage = async (props: {
   searchParams: Promise<Record<string, string>>;
@@ -58,25 +70,25 @@ const OrdersPage = async (props: {
 
     return dayjs(res.data[status]).format("MMM D, YYYY");
   };
+const orderStatusDataTwo = async (status: string, id: number) => {
+  const res = await getOrderDates(id);
+  const data = res.data;
 
-  const orderStatusDataTwo = async (status: string, id: number) => {
-    const res = await getOrderDates(id);
+  if (!data) return "";
 
-    const data = res.data;
-    if (!data) {
-      return;
-    }
-    if (status == "Pattern/Khaka") {
-      let rr = res.data.pattern;
-      if (rr != "") {
-        return dayjs(res.data.pattern).format("MMM D, YYYY");
-      } else {
-        return "";
-      }
-    }
+  const dbField = statusToDbField[status];
 
-    return dayjs(res.data[status]).format("MMM D, YYYY");
-  };
+  // Balance Pending ya unknown status
+  if (!dbField) return "";
+
+  // Agar date present hai
+  if (data[dbField]) {
+    return dayjs(data[dbField]).format("MMM D, YYYY");
+  }
+
+  return "";
+};
+
 
   const customers = await getCustomers({});
 
@@ -98,11 +110,11 @@ const OrdersPage = async (props: {
   <div className="flex items-center gap-3">
 
     {/* QR Scan Button */}
-    <Link href="/admin-panel/orders/qr-scan">
+    {/* <Link href="/admin-panel/orders/qr-scan">
       <Button variant="outline" className="text-sm">
         📷 QR Scan
       </Button>
-    </Link>
+    </Link> */}
 
     <DeleteButton />
 

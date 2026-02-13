@@ -21,6 +21,7 @@ import RejectedOrders from "./RejectedOrders";
 import AdminDeliveredOrders from "./AdminDeliveredOrders";
 import CustomPagination from "@/components/custom/admin-panel/customPagination";
 import Orders from "./Orders";
+import TableScrollWrapper from "@/components/TableScrollWrapper";
 
 // import AdminDeliveredOrders from
 
@@ -68,6 +69,7 @@ const page = async (props: {
         <DeleteButton />
         hh
       </div> */}
+      <TableScrollWrapper>
       <Tabs defaultValue="accepted" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="accepted">Accepted</TabsTrigger>
@@ -92,6 +94,7 @@ const page = async (props: {
           <RejectedOrders searchParams={searchParams} myOrders={myOrders.orders} />
         </TabsContent>
       </Tabs>
+      </TableScrollWrapper>
     </ContentLayout>
   );
 };

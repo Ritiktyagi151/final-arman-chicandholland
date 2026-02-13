@@ -84,7 +84,9 @@ const resolveColor = (color?: string) => {
 /* ================= LABEL COMPONENT ================= */
 
 export default function StatusLabelBox1({ item }: { item: any }) {
-  const { name: colorName, hex: colorHex } = resolveColor(item.color);
+const { name: colorName, hex: colorHex } = resolveColor(
+  item.meshColor || item.color
+);
 
   return (
     <div className="w-[210px] border-2 border-gray-800 bg-gradient-to-b from-white to-gray-50 rounded-lg shadow-lg overflow-hidden">

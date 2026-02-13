@@ -14,6 +14,7 @@ import TableActions from "./TableActions";
 import CustomPagination from "@/components/custom/admin-panel/customPagination";
 import MapProvider from "@/components/custom/map-provider";
 import ImportQuickbook from "@/app/(admin-panel)/admin-panel/customers/ImportQuickbook";
+import TableScrollWrapper from "@/components/TableScrollWrapper";
 
 const Customers = async (props: {
   searchParams: Promise<Record<string, string>>;
@@ -47,7 +48,7 @@ const Customers = async (props: {
 
           <div className="space-y-2">
             <CustomSearchBar query={query} />
-
+<TableScrollWrapper>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -82,6 +83,7 @@ const Customers = async (props: {
                 })}
               </TableBody>
             </Table>
+            </TableScrollWrapper>
 
             <CustomPagination
               currentPage={currentPage}

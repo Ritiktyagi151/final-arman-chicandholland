@@ -952,7 +952,7 @@ const StockEmail = async (preDatas: any) => {
 
     <div className="flex justify-end py-3">
      <PDFDownloadLink
-  document={<RetailerPdf orderData={previewData} />}
+  document={<FreshOrderPdf orderData={previewData} />}
   fileName={`${previewData.purchaseOrderNo}.pdf`}
 >
 
@@ -963,7 +963,7 @@ const StockEmail = async (preDatas: any) => {
     </div>
 
    <PDFViewer className="mt-2 h-full w-full" showToolbar={false}>
-  <RetailerPdf orderData={previewData} />
+  <FreshOrderPdf orderData={previewData} />
 </PDFViewer>
 
   </>

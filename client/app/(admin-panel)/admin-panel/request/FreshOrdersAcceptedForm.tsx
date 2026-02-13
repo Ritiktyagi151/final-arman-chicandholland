@@ -209,7 +209,7 @@ form.setValue("phoneNumber", data[0].phoneNumber);
     const arrayData = data.map((it: any) => ({
 styleNo: it.productCode ?? it.styleNo ?? "",      customColor: it.color,
       size: it.admin_us_size
-        ? `US ${it.admin_us_size}`
+        ? `${it.admin_us_size}`
         : `${it.size} (${it.size_country})`,
       quantity: it.quantity,
       comments: it.comments,
@@ -1585,7 +1585,7 @@ value={field.value || 0}
 
     {/* 🔹 Live Preview */}
     <PDFViewer className="mt-2 h-full w-full" showToolbar={false}>
-      <RetailerPdf  orderData={previewData} />
+      <FreshOrderPdf orderData={previewData} />
     </PDFViewer>
   </>
 )}

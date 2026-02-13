@@ -84,7 +84,7 @@ const resolveColor = (color?: string) => {
 /* ================= LABEL COMPONENT ================= */
 
 export default function StatusLabelBox({ item }: { item: any }) {
-  const { name: colorName, hex: colorHex } = resolveColor(item.color);
+
 
   return (
     <div className="w-[210px] border-2 border-gray-800 bg-gradient-to-b from-white to-gray-50 rounded-lg shadow-lg overflow-hidden">
@@ -112,33 +112,19 @@ export default function StatusLabelBox({ item }: { item: any }) {
             </div>
           </div>
 
-          {/* COLOR */}
-          <div className="text-center">
-            <div className="text-xs font-semibold text-gray-500 mb-1">
-              COLOR
-            </div>
+  {/* COLOR = BACKEND MESH COLOR (AS-IT-IS) */}
+<div className="text-center">
+  <div className="text-xs font-semibold text-gray-500 mb-1">
+    COLOR
+  </div>
 
-            <div className="flex items-center gap-2 bg-gray-100 py-1 px-2 rounded-md border border-gray-300">
-              {/* Swatch only if HEX */}
-              {colorHex && (
-                <span
-                  className="w-5 h-5 rounded border border-gray-400"
-                  style={{ backgroundColor: colorHex }}
-                />
-              )}
+  <div className="bg-gray-100 py-2 px-3 rounded-md border border-gray-300">
+    <div className="text-xs font-bold text-gray-800 text-center leading-tight">
+      {item.meshColor || item.color}
+    </div>
+  </div>
+</div>
 
-              <div className="text-left leading-tight">
-                <div className="text-xs font-bold text-gray-800">
-                  {colorName}
-                </div>
-                {colorHex && (
-                  <div className="text-[9px] text-gray-500 uppercase">
-                    {colorHex}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
 
         </div>
 

@@ -191,33 +191,40 @@ router.get(
     const rows = await db.query(
       `
       SELECT
-        ros.id               AS styleId,
-        ros.styleNo          AS styleNo,
-        ros.barcode          AS barcode,
+  ros.id              AS styleId,
+  ros.styleNo         AS styleNo,
+  ros.barcode         AS barcode,
 
-        -- 🔥 RAW VALUES ONLY
-        ros.size             AS size,
-        ros.quantity         AS quantity,
+  ros.size            AS size,
+  ros.quantity        AS quantity,
 
-        ro.purchaeOrderNo    AS purchaseOrderNo,
+  ro.purchaeOrderNo   AS purchaseOrderNo,
+  f.admin_us_size     AS admin_us_size,
 
-        -- SAME AS PREVIEW
-        f.color              AS color,
-        f.admin_us_size      AS admin_us_size
+  -- ✅ REAL FIX
+  CONCAT(
+    'SAS(',
+    COALESCE(pc.name, f.mesh_color),
+    ')'
+  ) AS meshColor
 
-      FROM retailer_order_styles ros
-      INNER JOIN retailer_orders ro
-        ON ro.id = ros.retailerOrderId
+FROM retailer_order_styles ros
+INNER JOIN retailer_orders ro
+  ON ro.id = ros.retailerOrderId
 
-      LEFT JOIN retailer_favourites_orders rfo
-        ON rfo.id = ro.favouriteOrderId
+LEFT JOIN retailer_favourites_orders rfo
+  ON rfo.id = ro.favouriteOrderId
 
-      LEFT JOIN favourites f
-        ON FIND_IN_SET(f.id, rfo.favourite_ids) > 0
+LEFT JOIN favourites f
+  ON FIND_IN_SET(f.id, rfo.favourite_ids) > 0
 
-      WHERE ro.id = ?
-      ORDER BY ros.id ASC
-      `,
+-- 🔥 JOIN WITH EXISTING COLOR MASTER
+LEFT JOIN product_colours pc
+  ON LOWER(pc.hexcode) = LOWER(f.mesh_color)
+
+WHERE ro.id = ?
+ORDER BY ros.id ASC;
+`,
       [orderId]
     );
 
@@ -248,6 +255,7 @@ router.get(
         quantity: row.quantity ?? 1,
         color: row.color,
         purchaseOrderNo: row.purchaseOrderNo,
+  meshColor: row.meshColor,   // ✅ ADD THIS
 
         completed,
         remaining: (row.quantity ?? 1) - completed,
@@ -272,7 +280,7 @@ router.get(
 
     const rows = await db.query(
       `
-      SELECT
+     SELECT
   sos.id        AS styleId,
   sos.styleNo   AS styleNo,
   sos.barcode   AS barcode,
@@ -280,10 +288,15 @@ router.get(
   sos.size      AS size,
   sos.quantity  AS quantity,
 
-  s.size_country AS size_country,   -- ✅ ADD THIS
-
+  s.size_country AS size_country,
   ro.purchaeOrderNo AS purchaseOrderNo,
-  s.mesh_color  AS color
+
+  -- ✅ SAME COLOR FIX AS RETAILER
+  CONCAT(
+    'SAS(',
+    COALESCE(pc.name, s.mesh_color),
+    ')'
+  ) AS meshColor
 
 FROM stock_order_styles sos
 INNER JOIN retailer_orders ro
@@ -295,8 +308,13 @@ INNER JOIN retailer_stock_orders rso
 INNER JOIN stock s
   ON s.id = rso.stockId
 
+-- 🔥 JOIN COLOR MASTER
+LEFT JOIN product_colours pc
+  ON LOWER(pc.hexcode) = LOWER(s.mesh_color)
+
 WHERE ro.id = ?
-ORDER BY sos.id ASC
+ORDER BY sos.id ASC;
+
 
       `,
       [orderId]
@@ -330,6 +348,8 @@ ORDER BY sos.id ASC
   quantity: row.quantity ?? 1,
   color: row.color,
   purchaseOrderNo: row.purchaseOrderNo,
+    meshColor: row.meshColor, // ✅ USE THIS ONLY
+
 
   completedQty,
   remainingQty: (row.quantity ?? 1) - completedQty,

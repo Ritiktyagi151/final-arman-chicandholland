@@ -1286,47 +1286,75 @@ function getNextStatus(current: string | null): string {
 }
 
 
-// Store Status Report
 PublicStoreRoutes.get(
   "/store-status/report/:orderId",
-  asyncHandler(async (req:Request, res:Response) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const { orderId } = req.params;
-    const styles = await Style.find({
-      where: { order: { id: Number(orderId) } },
-        relations: ["order"],   // ⭐ IMPORTANT
 
-    });
+    const rows = await db.query(
+      `
+      SELECT
+        s.id AS styleId,
+        s.styleNo,
+        s.barcode,
+
+        s.size,
+        s.quantity,
+
+        o.purchaeOrderNo,
+
+        -- ✅ SAME FIX AS OTHER REPORTS
+        CONCAT(
+          'SAS(',
+          COALESCE(pc.name, s.mesh_color),
+          ')'
+        ) AS meshColor
+
+      FROM orderstyles s
+      INNER JOIN orders o
+        ON o.id = s.orderId
+
+      LEFT JOIN product_colours pc
+        ON LOWER(pc.hexcode) = LOWER(s.mesh_color)
+
+      WHERE o.id = ?
+      ORDER BY s.id ASC
+      `,
+      [orderId]
+    );
 
     const final = [];
 
-    for (const style of styles) {
+    for (const row of rows) {
       const progress = await StoreStyleProgress.find({
-        where: { barcode: style.barcode },
+        where: { barcode: row.barcode },
         order: { createdAt: "ASC" },
       });
 
       const completedQty = progress.reduce((sum, p) => sum + p.qty, 0);
 
-     final.push({
-  styleId: style.id,
-  styleNo: style.styleNo,
-  barcode: style.barcode,
+      final.push({
+        styleId: row.styleId,
+        styleNo: row.styleNo,
+        barcode: row.barcode,
 
-  // 🔥 LABEL BOX DATA
-size: `${style.size}/${style.quantity}`,  color: style.colorType,              // same as preview
-  purchaseOrderNo: style.order?.purchaeOrderNo,
+        // ✅ LABEL DATA
+        size: row.size,
+        quantity: row.quantity,
+        meshColor: row.meshColor,
+        purchaseOrderNo: row.purchaeOrderNo,
 
-  totalQty: style.quantity,
-  completedQty,
-  remainingQty: style.quantity - completedQty,
-  progress,
-});
-
+        totalQty: row.quantity,
+        completedQty,
+        remainingQty: row.quantity - completedQty,
+        progress,
+      });
     }
 
     res.json({ success: true, data: final });
   })
 );
+
 router.get(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {

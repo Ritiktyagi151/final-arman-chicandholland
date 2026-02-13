@@ -65,15 +65,15 @@ const Stock = async (props: {
             return (
               <div
                 key={item.id}
-                className="flex flex-col rounded-md border shadow-sm hover:shadow-md p-[6px]"
+                className="flex flex-col rounded-md border shadow-sm hover:shadow-md p-2"
               >
                 {/* IMAGE */}
-                <div className="aspect-[2/2] w-full overflow-hidden rounded-md">
+<div className="aspect-[3/3.8] w-[auto] overflow-hidden rounded-md">
                   <StyleNoImage details={item} />
                 </div>
 
                 {/* DETAILS */}
-                <div className="flex flex-col flex-1 px-1 py-1 text-xs">
+<div className="flex flex-col flex-1 p-0 text-sm">
                   {/* QTY + PRICE */}
                   <div className="mb-6 flex items-center justify-between">
                     <span className="rounded bg-gray-100 px-1 py-[1px]">
@@ -158,7 +158,7 @@ const Stock = async (props: {
                   currencies={currencies?.currencies ?? currencies}
                   edit={true}
                   placeOrder={false}
-                  className="mt-auto scale-95"
+                  className="mt-auto scale-95 "
                 />
               </div>
             );

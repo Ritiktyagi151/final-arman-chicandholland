@@ -1,12 +1,17 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+import Link from "next/link";
 import { API_URL } from "@/lib/constants";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 import StatusLabelBox from "@/components/StatusLabelBox";
+import StatusLabelBox1 from "@/components/StoreLable";
+
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import LabelPdf from "@/components/LabelPdf";
-import StatusLabelBox1 from "@/components/StoreLable";
+import LabelPdf1 from "@/components/LabelBox";
 
 export default function OrderStatusPage({ params }: any) {
   const { id } = use(params);
@@ -19,25 +24,20 @@ export default function OrderStatusPage({ params }: any) {
   const fetchReport = async () => {
     setLoading(true);
 
-    // 🔵 Retailer (Fresh)
     try {
       const res = await fetch(`${API_URL}/report/status/report/${id}`);
       const json = await res.json();
       if (json.success) setRetailerReport(json.data || []);
     } catch {}
 
-    // 🟢 Store (existing – if any)
     try {
       const res2 = await fetch(`${API_URL}/orders/store-status/report/${id}`);
       const json2 = await res2.json();
       if (json2.success) setStoreReport(json2.data || []);
     } catch {}
 
-    // 🟣 Stock (NEW)
     try {
-      const res3 = await fetch(
-        `${API_URL}/report/stock-status/report/${id}`
-      );
+      const res3 = await fetch(`${API_URL}/report/stock-status/report/${id}`);
       const json3 = await res3.json();
       if (json3.success) setStockReport(json3.data || []);
     } catch {}
@@ -60,7 +60,18 @@ export default function OrderStatusPage({ params }: any) {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl mb-6 font-bold">Order Status Report</h1>
+
+      {/* ================= HEADER ================= */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Order Status Report</h1>
+
+        {/* QR SCAN BUTTON */}
+        <Link href="/admin-panel/orders/qr-scan">
+          <Button variant="outline" className="text-sm">
+            📷 QR Scan
+          </Button>
+        </Link>
+      </div>
 
       {/* ================================================= */}
       {/* 🔵 RETAILER REPORT */}
@@ -146,7 +157,7 @@ export default function OrderStatusPage({ params }: any) {
                 <div className="flex flex-col items-center gap-2">
                   <StatusLabelBox1 item={item} />
                   <PDFDownloadLink
-                    document={<LabelPdf item={item} />}
+                    document={<LabelPdf1 item={item} />}
                     fileName={`${item.styleNo}-label.pdf`}
                   >
                     {({ loading }) => (
@@ -161,10 +172,6 @@ export default function OrderStatusPage({ params }: any) {
           ))}
         </div>
       )}
-
-      {/* ================================================= */}
-      {/* 🟣 STOCK REPORT (NEW) */}
-      {/* ================================================= */}
       {stockReport.length > 0 && (
         <div>
           <h2 className="text-xl font-bold mb-4 text-purple-600">
@@ -192,7 +199,6 @@ export default function OrderStatusPage({ params }: any) {
                     </div>
                   ))}
                 </div>
-
                 <div className="flex flex-col items-center gap-2">
                   <StatusLabelBox item={item} />
                   <PDFDownloadLink
