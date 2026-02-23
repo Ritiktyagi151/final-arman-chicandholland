@@ -12,14 +12,15 @@ import WebLabelBox from "@/components/WebLabelBox";
 export default function QRScanPage() {
   const [barcode, setBarcode] = useState("");
   const [result, setResult] = useState<any>(null);
+  const [readyForShip, setReadyForShip] = useState(false);
   const inputRef = useRef<any>(null);
 
-  // Autofocus on load
+  // Autofocus
   useEffect(() => {
-    if (inputRef.current) inputRef.current.focus();
+    inputRef.current?.focus();
   }, []);
 
-  // 🔥 AUTO SCAN — AUTO PROCESS
+  // 📷 CAMERA SCAN
   const handleScan = async (data: string | null) => {
     if (data && data !== barcode) {
       setBarcode(data);
@@ -27,10 +28,45 @@ export default function QRScanPage() {
     }
   };
 
-  // 🔥 Process barcode (fresh → if fail → stock)
+  // 🔥 MAIN BARCODE PROCESSOR
   const processBarcode = async (code: string) => {
     try {
-      // 1️⃣ Fresh order scan API
+      /* =========================================
+         🚚 FINAL CONFIRM SHIP (LAST SCAN)
+      ========================================= */
+      if (readyForShip) {
+        const res = await fetch(`${API_URL}/scan/scan`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            barcode: code,
+            confirmShip: true,
+          }),
+        });
+
+        const json = await res.json();
+
+        if (json.code === "SHIPPED") {
+          toast.success("🚚 Order Shipped Successfully");
+
+          setResult({
+            success: true,
+            barcode: code,
+            currentStage: "Ready To Delivery",
+            nextStage: "Shipped",
+          });
+
+          setReadyForShip(false);
+          return;
+        }
+
+        toast.error(json.message || "Unable to ship order");
+        return;
+      }
+
+      /* =========================================
+         🔄 NORMAL SCAN
+      ========================================= */
       let res = await fetch(`${API_URL}/scan/scan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -39,8 +75,8 @@ export default function QRScanPage() {
 
       let json = await res.json();
 
-      // ❗ If fresh failed → try stock scan
-      if (!json.success) {
+      // Try stock if fresh failed
+      if (!json.success && !json.code) {
         res = await fetch(`${API_URL}/scan/stock/scan`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -49,34 +85,69 @@ export default function QRScanPage() {
         json = await res.json();
       }
 
+      /* =========================================
+         ⛔ BALANCE PENDING
+      ========================================= */
+      if (json.code === "WAIT_ADMIN") {
+        toast.warning("⏳ Admin Have Not Now Ready To Delivery ");
+        setResult({
+          success: false,
+          message: json.message,
+        });
+        return;
+      }
+
+      /* =========================================
+         🟡 READY TO DELIVERY (ADMIN APPROVED)
+      ========================================= */
+      if (json.code === "READY_FOR_SHIP") {
+        toast.info("✅ Admin Have Ready To Delivery Done");
+        setReadyForShip(true);
+
+        setResult({
+          success: true,
+          barcode: code,
+          currentStage: "Ready To Delivery",
+          nextStage: "Ready To Delivery",
+          message: json.message,
+        });
+        return;
+      }
+
+      /* =========================================
+         ✅ NORMAL SUCCESS
+      ========================================= */
       if (json.success) {
         toast.success(`Stage Updated: ${json.nextStage}`);
         setResult(json);
-      } else {
-        toast.error(json.message || "Invalid Barcode");
+        return;
       }
-    } catch {
-      toast.error("Something went wrong");
-    }
 
-    setBarcode("");
-    if (inputRef.current) inputRef.current.focus();
+      toast.error(json.message || "Invalid Barcode");
+    } catch (err) {
+      toast.error("Something went wrong");
+    } finally {
+      setBarcode("");
+      inputRef.current?.focus();
+    }
   };
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">📦 Barcode Scan (Auto Stage Update)</h1>
+      <h1 className="text-xl font-bold mb-4">
+        📦 Barcode Scan (Auto Stage Update)
+      </h1>
 
-      {/* CAMERA SCANNER */}
+      {/* CAMERA */}
       <div className="w-full max-w-md">
         <QrReader
-          onResult={(result) => result?.text && handleScan(result.text)}
+          onResult={(res) => res?.text && handleScan(res.text)}
           constraints={{ facingMode: "environment" }}
           containerStyle={{ width: "100%" }}
         />
       </div>
 
-      {/* Manual Input */}
+      {/* MANUAL INPUT */}
       <div className="mt-4">
         <Input
           ref={inputRef}
@@ -88,7 +159,7 @@ export default function QRScanPage() {
         <Button onClick={() => processBarcode(barcode)}>Process</Button>
       </div>
 
-      {/* RESULT CARD */}
+      {/* RESULT */}
       {result && (
         <Card className="mt-6 p-4 border-2">
           <h2 className="text-lg font-semibold">
@@ -100,14 +171,13 @@ export default function QRScanPage() {
               <p className="mt-2 text-sm">Barcode: {result.barcode}</p>
               <p>Previous Stage: {result.currentStage || "---"}</p>
               <p className="font-bold text-green-600 text-lg">
-                Updated To: {result.nextStage}
+                Updated To: {result.nextStage || result.currentStage}
               </p>
             </>
           ) : (
             <p className="text-red-600 mt-2">{result.message}</p>
           )}
 
-          {/* LABEL BOX SHOW */}
           {result.success && (
             <div className="mt-6 flex justify-center">
               <WebLabelBox

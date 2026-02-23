@@ -122,7 +122,7 @@ const OrderStatus = [
   "Zarkan",
   "Stitching",
   "Balance Pending",
-  "Ready to Delivery",
+  "Ready To Delivery",
   "Shipped",
 ];
 
@@ -384,13 +384,13 @@ const Details = ({
     try {
       // const tem = ["Moved To Delivery", "Delivered"];
 
-      const tem = ["Ready To Delivery", "Shipped"];
+    // ❌ Payment check ONLY for Shipped
+if (data.status === "Shipped" && billAmount.balance !== 0) {
+  toast.error("Payment is not paid yet. Cannot ship order.");
+  return;
+}
 
-
-      if (tem.includes(data.status) && billAmount.balance != 0) {
-        toast.error("Payment is not paid yet");
-        return;
-      }
+// ✅ Ready To Delivery is ALWAYS allowed (even if balance pending)
 
       if (data.status == "Delivered" && data.id == "") {
         return toast.error("Tracking Id is Required");

@@ -23,8 +23,6 @@ const RETAILER_FLOW = [
   "Zarkan",
   "Stitching",
   "Balance Pending",
-  "Ready To Delivery",
-  "Shipped",
 ];
 
 function nextFreshStage(current: string | null): string {
@@ -140,34 +138,79 @@ router.post(
 
     const order = style.retailerOrder;
 
-    /* --------- PAYMENT VALIDATION --------- */
-    const payments = await RetailerOrdersPayment.find({
-      where: { order: { id: order.id } },
-    });
+    // /* --------- PAYMENT VALIDATION --------- */
+    // const payments = await RetailerOrdersPayment.find({
+    //   where: { order: { id: order.id } },
+    // });
 
-    const paid = payments.reduce((sum, p) => sum + p.amount, 0);
-    const remaining = Number(order.purchaseAmount) - paid;
+    // const paid = payments.reduce((sum, p) => sum + p.amount, 0);
+    // const remaining = Number(order.purchaseAmount) - paid;
 
-    /* STOP movement at Balance Pending */
-    if (order.orderStatus === "Balance Pending" && remaining > 0) {
-      return res.json({
-        success: false,
-        message: "Payment Pending!",
-        balance: remaining,
-      });
-    }
+   /* ------------------------------------
+   🔒 BARCODE FLOW CONTROL (FINAL)
+------------------------------------- */
 
-    /* STOP going to Ready or Shipped unless paid */
-    if (
-      ["Ready To Delivery", "Shipped"].includes(order.orderStatus) &&
-      remaining > 0
-    ) {
-      return res.json({
-        success: false,
-        message: "Payment required before delivery or shipping",
-        balance: remaining,
-      });
-    }
+if ((order.orderStatus as OrderStatus) === OrderStatus.Balance_Pending) {
+  return res.json({
+    success: false,
+    code: "WAIT_ADMIN",
+    message:
+      "Balance Pending hai. Admin ne Ready To Delivery nahi kiya.",
+  });
+}
+
+/* ------------------------------------
+   🔒 BARCODE FLOW CONTROL (FINAL)
+------------------------------------- */
+
+
+// 🚚 FINAL BARCODE SCAN → SHIP CONFIRM
+if (
+  (order.orderStatus as OrderStatus) === OrderStatus.Ready_To_Delivery
+ &&
+  req.body.confirmShip === true
+) {
+  const now = new Date();
+
+  order.orderStatus = OrderStatus.Shipped;
+  order.shipped = now;
+  order.shippingStatus = ShippingStatus.Shipped;
+  order.shippingDate = now;
+  order.status_id = 1;
+
+  await order.save();
+
+  const progress = new StyleProgress();
+  progress.barcode = barcode;
+  progress.stage = OrderStatus.Shipped as any;
+  progress.qty = 1;
+  await progress.save();
+
+  return res.json({
+    success: true,
+    code: "SHIPPED",
+    message: "Order shipped successfully",
+    nextStage: "Shipped",
+  });
+}
+
+
+
+// 🟡 Admin Ready To Delivery → message only
+if ((order.orderStatus as OrderStatus) === OrderStatus.Ready_To_Delivery) {
+  return res.json({
+    success: true,
+    code: "READY_FOR_SHIP",
+    message:
+      "Admin ne Ready To Delivery kar diya hai. Last scan karke Shipped karein.",
+    nextAction: "CONFIRM_SHIP",
+  });
+}
+
+
+
+
+
 
     /* --------- CURRENT STAGE --------- */
     const last = await StyleProgress.findOne({

@@ -14,15 +14,16 @@ export default function StoreQRScanPage() {
   const [scanLock, setScanLock] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // 🔍 fetch style + progress
   const fetchBarcode = async (code: string) => {
     const res = await fetch(
       `${API_URL}/orders/store-scan/${encodeURIComponent(code)}`
     );
     const r = await res.json();
-    if (r.success) setScannedData({ data: r.data });
+    if (r.success) setScannedData(r.data);
   };
 
-  // 🔥 EXACT RETAILER STYLE
+  // 📦 MAIN SCAN HANDLER
   const handleScan = async (data: string | null) => {
     if (!data || scanLock) return;
 
@@ -38,45 +39,84 @@ export default function StoreQRScanPage() {
 
       const r = await res.json();
 
+      // ❌ blocked cases (balance pending / ready by admin)
       if (!r.success) {
         toast.error(r.message);
-      } else {
-        toast.success(`Stage Updated: ${r.nextStage}`);
         await fetchBarcode(data);
+        return;
       }
-    } catch {
-      toast.error("Scan failed");
-    }
 
-    setBarcode("");
-    inputRef.current?.focus();
-    setTimeout(() => setScanLock(false), 1500);
+      // ✅ success cases
+      if (r.nextStage === "Balance Pending") {
+        toast.success("✅ Balance Pending reached");
+      } 
+      else if (r.nextStage === "Shipped") {
+        toast.success("🚚 Order successfully shipped");
+      } 
+      else {
+        toast.success(`Stage Updated → ${r.nextStage}`);
+      }
+
+      await fetchBarcode(data);
+    } catch (err) {
+      toast.error("Scan failed");
+    } finally {
+      setBarcode("");
+      inputRef.current?.focus();
+      setTimeout(() => setScanLock(false), 1500);
+    }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-xl mx-auto">
       <h1 className="text-xl font-bold mb-4">📦 Store Barcode Scanner</h1>
 
+      {/* CAMERA SCAN */}
       <QrReader
         onResult={(r) => r?.text && handleScan(r.text)}
         constraints={{ facingMode: "environment" }}
+        className="rounded border"
       />
 
-      <div className="mt-4">
+      {/* MANUAL INPUT */}
+      <div className="mt-4 flex gap-2">
         <Input
           ref={inputRef}
-          placeholder="Enter barcode manually"
+          placeholder="Enter / Scan barcode"
           value={barcode}
           onChange={(e) => setBarcode(e.target.value)}
         />
         <Button onClick={() => handleScan(barcode)}>Process</Button>
       </div>
 
+      {/* RESULT CARD */}
       {scannedData && (
-        <Card className="mt-6 p-4">
-          <h2 className="font-semibold">{scannedData.data.styleNo}</h2>
-          <p>Order: {scannedData.data.purchaeOrderNo}</p>
-          <p>Status Flow working ✔️</p>
+        <Card className="mt-6 p-4 space-y-1">
+          <h2 className="font-semibold text-lg">
+            Style: {scannedData.styleNo}
+          </h2>
+
+          <p>
+            <b>Order:</b> {scannedData.purchaeOrderNo}
+          </p>
+
+          <p>
+            <b>Completed Qty:</b> {scannedData.completedQty} /{" "}
+            {scannedData.quantity}
+          </p>
+
+          <p>
+            <b>Remaining Qty:</b> {scannedData.remainingQty}
+          </p>
+
+          {/* 🔔 STATUS GUIDANCE */}
+          {scannedData.progress?.some(
+            (p: any) => p.status === "Ready To Delivery"
+          ) && (
+            <p className="text-green-600 font-medium">
+              ✅ Order Ready To Delivery —You Can Shipped
+            </p>
+          )}
         </Card>
       )}
     </div>

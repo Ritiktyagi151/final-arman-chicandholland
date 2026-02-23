@@ -195,83 +195,32 @@ router.post(
             continue; // Skip this customer
           }
 
-          let newClient = null;
+         const addr = qbCustomer.ShipAddr || qbCustomer.BillAddr;
 
-          const addr = qbCustomer.ShipAddr || qbCustomer.BillAddr; // Prefer ShipAddr, fallback to BillAddr
+const formattedAddress = addr
+  ? `${addr.Line1 || ""} ${addr.City || ""} ${
+      addr.CountrySubDivisionCode || ""
+    } ${addr.PostalCode || ""}`.trim()
+  : "Address not available";
 
-          let formattedAddress = "";
-          if (addr) {
-            formattedAddress = `${addr.Line1 ? `${addr.Line1},` : ""} ${
-              addr.City
-            }, ${addr.CountrySubDivisionCode} ${addr.PostalCode}`;
-          }
+const newClient = Clients.create({
+  name: qbCustomer.CompanyName || qbCustomer.DisplayName || "Unknown",
+  address: formattedAddress,
+  proximity: 1,
+  latitude:
+    addr?.Lat && addr.Lat !== "INVALID" ? addr.Lat : "0",
+  longitude:
+    addr?.Long && addr.Long !== "INVALID" ? addr.Long : "0",
+  city_name: addr?.City || "",
+});
 
-          if (addr?.Lat !== "INVALID" && addr?.Long !== "INVALID") {
-            try {
-              const lat = addr.Lat;
-              const lng = addr.Long;
-              let cityName = "";
+await newClient.save();
 
-              if (lat && lng) {
-                const response = await googleMapsClient.reverseGeocode({
-                  params: {
-                    latlng: { lat, lng },
-                    key: config.GOOGLE_MAPS_API_KEY,
-                  },
-                });
-
-                if (response.data.results?.length > 0) {
-                  for (const result of response.data.results) {
-                    const city = result.address_components?.find(
-                      (component: any) =>
-                        component.types.includes("locality") ||
-                        component.types.includes("administrative_area_level_2")
-                    );
-
-                    if (city?.long_name) {
-                      cityName = city.long_name;
-                      break;
-                    }
-                  }
-
-                  if (!cityName) {
-                    const parts = response.data.results[0].formatted_address
-                      .split(",")
-                      .map((part) => part.trim());
-                    if (parts.length >= 3) {
-                      const potentialCity = parts[parts.length - 3]
-                        .split(" ")
-                        .filter((word) => isNaN(Number(word)))
-                        .join(" ");
-                      cityName = potentialCity || "";
-                    }
-                  }
-
-                  formattedAddress = response.data.results[0].formatted_address;
-                }
-
-                newClient = Clients.create({
-                  name: qbCustomer.CompanyName || qbCustomer.DisplayName || "",
-                  address: formattedAddress,
-                  proximity: 1,
-                  latitude: lat,
-                  longitude: lng,
-                  city_name: cityName,
-                });
-
-                await newClient.save();
-              }
-            } catch (error) {
-              console.error(
-                "Failed to create client, continuing with customer import:",
-                error
-              );
-            }
-          }
 
           // Create the customer
           const customer = new Customer();
           customer.quickbooksCustomerId = qbCustomer.Id;
+customer.client = newClient;
 
           // Handle required fields with fallbacks
           customer.name =

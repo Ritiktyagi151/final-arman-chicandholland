@@ -3,6 +3,7 @@ import BaseModel from "./BaseModel";
 import Stock from "./Stock";
 import Currency from "./Currency";
 import { TABLE_NAMES } from "../constants";
+
 @Entity(TABLE_NAMES.STOCK_CURRENCY_PRICING)
 @Unique(["stock", "currency"]) // Ensure one price per currency per stock
 export default class StockCurrencyPricing extends BaseModel {

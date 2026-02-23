@@ -109,15 +109,14 @@ router.post(
         customer.currencyId = defaultCurrency.id.toString();
       }
     }
-
-    const newClient = Clients.create({
-      name: req.body.storeName,
-      address: req.body.address,
-      proximity: req.body.proximity,
-      latitude: req.body.coordinates.latitude,
-      longitude: req.body.coordinates.longitude,
-      city_name: req.body.city_name,
-    });
+const newClient = Clients.create({
+  name: req.body.storeName,
+  address: req.body.address,
+  proximity: req.body.proximity || 1,
+  latitude: req.body.coordinates?.latitude || "0",
+  longitude: req.body.coordinates?.longitude || "0",
+  city_name: req.body.city_name || "",
+});
 
     customer.client = newClient;
 
@@ -232,51 +231,34 @@ router.put(
 
     let clientError = null;
 
-    // Handle client data
-    if (
-      req.body.address &&
-      req.body.coordinates?.latitude &&
-      req.body.coordinates?.longitude
-    ) {
-      try {
-        let client;
+   // ✅ ALWAYS handle client (manual + quickbooks)
+try {
+  let client = customer.client
+    ? await Clients.findOne({ where: { id: customer.client.id } })
+    : null;
 
-        // If customer has an existing client, update it
-        if (customer.client) {
-          client = await Clients.findOne({
-            where: { id: customer.client.id },
-          });
+  if (!client) {
+    client = Clients.create({});
+  }
 
-          if (client) {
-            client.name = req.body.storeName;
-            client.address = req.body.address;
-            client.proximity = req.body.proximity || 1;
-            client.latitude = req.body.coordinates.latitude;
-            client.longitude = req.body.coordinates.longitude;
-            client.city_name = req.body.city_name;
-            await client.save();
-          }
-        }
+  client.name = req.body.storeName;
+  client.address = req.body.address || client.address || "";
+  client.proximity = req.body.proximity || client.proximity || 1;
+  client.latitude =
+    req.body.coordinates?.latitude || client.latitude || "0";
+  client.longitude =
+    req.body.coordinates?.longitude || client.longitude || "0";
+  client.city_name = req.body.city_name || client.city_name || "";
 
-        if (!client) {
-          client = Clients.create({
-            name: req.body.storeName,
-            address: req.body.address,
-            proximity: req.body.proximity || 1,
-            latitude: req.body.coordinates.latitude,
-            longitude: req.body.coordinates.longitude,
-            city_name: req.body.city_name,
-          });
-          await client.save();
-          customer.client = client;
-        }
-      } catch (error: any) {
-        clientError = {
-          message: "Failed to update/create client location data",
-          details: error.message,
-        };
-      }
-    }
+  await client.save();
+  customer.client = client;
+} catch (error: any) {
+  clientError = {
+    message: "Failed to update/create client",
+    details: error.message,
+  };
+}
+
 
     await customer.save();
 

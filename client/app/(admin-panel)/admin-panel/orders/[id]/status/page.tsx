@@ -90,15 +90,16 @@ export default function OrderStatusPage({ params }: any) {
                     {item.styleNo} ({item.barcode})
                   </h2>
 
-                  <p>Total Qty: {item.totalQty}</p>
+                  {/* <p>Total Qty: {item.totalQty}</p>
                   <p>Completed: {item.completed}</p>
-                  <p>Remaining: {item.remaining}</p>
+                  <p>Remaining: {item.remaining}</p> */}
 
                   <h3 className="mt-2 font-semibold">Progress Logs</h3>
 
                   {item.progress?.map((p: any) => (
                     <div key={p.id} className="text-sm">
-                      {p.stage} — {p.qty} pcs —{" "}
+                      {p.stage} — 
+                      {/* {p.qty} pcs —{" "} */}
                       {new Date(p.createdAt).toLocaleDateString()}
                     </div>
                   ))}
@@ -140,15 +141,16 @@ export default function OrderStatusPage({ params }: any) {
                     {item.styleNo} ({item.barcode})
                   </h2>
 
-                  <p>Total Qty: {item.totalQty}</p>
+                  {/* <p>Total Qty: {item.totalQty}</p>
                   <p>Completed: {item.completedQty}</p>
-                  <p>Remaining: {item.remainingQty}</p>
+                  <p>Remaining: {item.remainingQty}</p> */}
 
                   <h3 className="mt-2 font-semibold">Progress Logs</h3>
 
                   {item.progress?.map((p: any) => (
                     <div key={p.id} className="text-sm">
-                      {p.stage || p.status} — {p.qty} pcs —{" "}
+                      {p.stage || p.status} — 
+                      {/* {p.qty} pcs —{" "} */}
                       {new Date(p.createdAt).toLocaleDateString()}
                     </div>
                   ))}
@@ -172,6 +174,10 @@ export default function OrderStatusPage({ params }: any) {
           ))}
         </div>
       )}
+
+      {/* ================================================= */}
+      {/* 🟣 STOCK REPORT */}
+      {/* ================================================= */}
       {stockReport.length > 0 && (
         <div>
           <h2 className="text-xl font-bold mb-4 text-purple-600">
@@ -186,19 +192,21 @@ export default function OrderStatusPage({ params }: any) {
                     {item.styleNo} ({item.barcode})
                   </h2>
 
-                  <p>Total Qty: {item.totalQty}</p>
+                  {/* <p>Total Qty: {item.totalQty}</p>
                   <p>Completed: {item.completedQty}</p>
-                  <p>Remaining: {item.remainingQty}</p>
+                  <p>Remaining: {item.remainingQty}</p> */}
 
                   <h3 className="mt-2 font-semibold">Progress Logs</h3>
 
                   {item.progress?.map((p: any) => (
                     <div key={p.id} className="text-sm">
-                      {p.stage || p.status} — {p.qty} pcs —{" "}
+                      {p.stage || p.status} — 
+                      {/* {p.qty} pcs —{" "} */}
                       {new Date(p.createdAt).toLocaleDateString()}
                     </div>
                   ))}
                 </div>
+
                 <div className="flex flex-col items-center gap-2">
                   <StatusLabelBox item={item} />
                   <PDFDownloadLink

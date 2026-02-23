@@ -124,6 +124,8 @@ const EditCustomerForm = ({
 
   /** Submit Edited Customer */
   const onSubmit = async (data: AddCustomerFormType) => {
+      console.log("ADD CUSTOMER SUBMIT 👉", data);
+
     try {
       const response = await executeAsync(data);
 
@@ -282,20 +284,25 @@ const EditCustomerForm = ({
               )}
             />
 
-            {/* PROXIMITY */}
             <FormField
-              control={form.control}
-              name="proximity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Proximity (Miles)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="5" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+  control={form.control}
+  name="proximity"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Proximity (Miles)</FormLabel>
+      <FormControl>
+       <Input
+  type="number"
+  placeholder="5"
+  {...field}
+/>
+
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
 
             {/* WEBSITE */}
             <FormField
