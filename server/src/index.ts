@@ -5,7 +5,7 @@
  * @date 24th june 2023
  * @version 1.0.0
  */
-
+import { BaseEntity } from "typeorm";
 import ColorChartController from "./controllers/ColorChartController";
 
 import { initializeData } from "./seeder/initializeData";
@@ -111,7 +111,12 @@ app.use(express.urlencoded({ limit: "20mb", extended: true }));
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://chicandholland.com",
+      "https://www.chicandholland.com",
+      "http://188.166.61.115"
+    ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
@@ -140,21 +145,22 @@ app.use("/uploads/ppt", express.static("uploads/ppt"));
       if (!fs.existsSync(dir)) fs.mkdirSync(dir);
     }
     
-    await db.initialize();
+  await db.initialize();
+BaseEntity.useDataSource(db);
+console.log("✅ Database connected");
 
 if (process.env.RUN_SEEDER === "true") {
   try {
     await initializeData();
   } catch (e) {
-    console.error("Seeder error (ignored in prod):", e);
+    console.error("Seeder error (ignored):", e);
   }
 }
 
-    await initializeData(); // seed countries/currencies if needed
-    
-    app.listen(port, () => {
-      console.log(`✅ Server is running on port ${port}`);
-    });
+app.listen(port, () => {
+  console.log(`✅ Server is running on port ${port}`);
+});
+ 
   } catch (err: any) {
     console.error("Error occurred while connecting to database");
     console.error("Error:", err.message);

@@ -100,53 +100,57 @@ export const updateShippingStatusFormSchema = z.object({
 
 export type ShippingStatusForm = z.infer<typeof updateShippingStatusFormSchema>;
 
+
 export const addCustomerFormSchema = z.object({
   name: z.string().min(1, {
     message: "Name is required",
   }),
+
   storeName: z.string().min(1, {
     message: "Store Name is required",
   }),
-  // storeAddress: z
-  //   .string()
-  //   .min(1, {
-  //     message: "Store Address is required",
-  //   })
-  //   .max(200, {
-  //     message: "Store Address should be less than 200 characters",
-  //   }),
+
   website: z.string().optional(),
+
   phoneNumber: z.string().min(1, {
     message: "Phone Number is required",
   }),
+
   contactPerson: z.string().min(1, {
     message: "Contact Person is required",
   }),
+
   email: z.string().email({
     message: "Invalid Email Address",
   }),
+
+  // ✅ PROXIMITY → STRING hi rakha (kyunki input string deta hai)
   proximity: z.string().min(1, {
     message: "Proximity is required",
   }),
-  address: z.string().min(1, {
-    message: "Address is required",
-  }),
-  coordinates: z.object({
-    latitude: z.string().min(1, {
-      message: "Latitude is required",
-    }),
-    longitude: z.string().min(1, {
-      message: "Longitude is required",
-    }),
-  }),
+
+    address: z.string().optional(),
+
+
+  // ✅ COORDINATES OPTIONAL (Edit + QuickBooks safe)
+  coordinates: z
+    .object({
+      latitude: z.string().optional(),
+      longitude: z.string().optional(),
+    })
+    .optional(),
+
   city_name: z.string().min(1, {
     message: "City/Town is required",
   }),
+
   country_id: z.string().min(1, {
     message: "Country is required",
   }),
+
   currency_id: z.string().optional(),
 });
+
 export type AddCustomerForm = z.infer<typeof addCustomerFormSchema>;
 
 export const addStockFormSchema = z.object({

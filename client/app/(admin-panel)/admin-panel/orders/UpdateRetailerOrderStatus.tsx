@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,12 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/custom/button";
-import { Edit } from "lucide-react";
 import { useForm } from "react-hook-form";
-import {
-  UpdateOrderStatusForm,
-  updateOrderStatusFormSchema,
-} from "@/lib/formSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -38,150 +33,242 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { getOrderStatusDatesDetails } from "@/lib/data";
+import { API_URL } from "@/lib/constants";
 import dayjs from "dayjs";
+
+/* ================= SCHEMA ================= */
+
 const updateFormSchema = z.object({
   status: z.string().min(1, { message: "Status is required" }),
 });
 
-interface dateTypes {
+/* ================= TYPES ================= */
+
+interface DateTypes {
   pattern: string | null;
+  khaka: string | null;
+  issue_beading: string | null;
   beading: string | null;
+  zarkan: string | null;
   stitching: string | null;
   balance_pending: string | null;
   ready_to_delivery: string | null;
   shippingStatus: string | null;
 }
+
+interface ProgressLog {
+  stage?: string;
+  status?: string;
+  createdAt: string;
+}
+
+/* ================= STATUS → DB FIELD ================= */
+
+const statusToDateField: Record<string, keyof DateTypes | null> = {
+  Pattern: "pattern",
+  Khaka: "khaka",
+  "Issue Beading": "issue_beading",
+  Beading: "beading",
+  Zarkan: "zarkan",
+  Stitching: "stitching",
+  "Balance Pending": "balance_pending",
+  "Ready To Delivery": "ready_to_delivery",
+  Shipped: "shippingStatus",
+};
+
+/* ================= COMPONENT ================= */
+
 const UpdateRetailerOrderStatus = ({ orderData }: { orderData: any }) => {
-  const [datesOfStatus, setDateOfStatus] = useState<dateTypes>({
-    pattern: "",
-    beading: "",
-    stitching: "",
-    balance_pending: "",
-    ready_to_delivery: "",
-    shippingStatus: "",
-  });
+  const router = useRouter();
 
   const [open, setOpen] = useState(false);
-  const updateForm = useForm<z.infer<typeof updateFormSchema>>({
+  const [datesOfStatus, setDatesOfStatus] = useState<DateTypes>({
+    pattern: null,
+    khaka: null,
+    issue_beading: null,
+    beading: null,
+    zarkan: null,
+    stitching: null,
+    balance_pending: null,
+    ready_to_delivery: null,
+    shippingStatus: null,
+  });
+
+  const [progressLogs, setProgressLogs] = useState<ProgressLog[]>([]);
+
+  const form = useForm<z.infer<typeof updateFormSchema>>({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
-      status: "", // Ensure it's at least an empty string
+      status: "",
     },
   });
 
-  const router = useRouter();
   const { executeAsync: statusChange, loading } = useHttp(
     `/retailer-orders/admin/status-update/${orderData.id}`,
-    "POST",
+    "POST"
   );
-  const statusUpdate = async (data: any) => {
-    console.log("hello");
 
+  /* ================= FETCH DB DATES ================= */
+
+  const fetchOrderDates = async () => {
     try {
-      const tem = ["Shipped"];
-
-     if (data.status === "Ready_To_Delivery" && orderData.balancePayment > 0) {
-  toast.error("Payment is pending!");
-  return;
-}
-
-
-      if (tem.includes(data.status) && orderData.balancePayment !== 0) {
-        toast.error("Payment is not paid yet");
-        return;
-      }
-
-      if (data.status == "Delivered" && data.id == "") {
-        return toast.error("Tracking Id is Required");
-      }
-      const res = await statusChange({
-        status: data.status,
-      });
-
-     if (!res.success) {
-  toast.error(res.msg);
-  return;
-}
-
-toast.success("Order Status Updated");
-router.refresh();
-setOpen(false);
-
-    } catch (error) {
-      toast.error("Error at Order Status Payment");
+      const res = await getOrderStatusDatesDetails(orderData.id);
+      if (res?.data) setDatesOfStatus(res.data);
+    } catch (err) {
+      console.error("Failed to fetch order dates", err);
     }
   };
 
-  const orderStatusArray = Object.entries(OrderStatus).map(
-    ([key, value], index: number) => {
-      const firstKey =
-        (datesOfStatus && Object.keys(datesOfStatus)[index]) || " ";
-      return {
-        value: key,
-        label: value,
-        date: (datesOfStatus as Record<string, any>)[firstKey] || null,
-      };
-    },
-  ) as { value: keyof typeof OrderStatus; label: string }[];
+  /* ================= FETCH RETAILER PROGRESS ================= */
 
-  const orderDates = async () => {
-    const res = await getOrderStatusDatesDetails(orderData.id);
-    setDateOfStatus(res.data);
+  const fetchRetailerProgress = async () => {
+    try {
+      const res = await fetch(
+        `${API_URL}/report/status/report/${orderData.id}`
+      );
+      const json = await res.json();
+
+      if (json.success && json.data?.length) {
+        const allProgress = json.data.flatMap(
+          (s: any) => s.progress || []
+        );
+        setProgressLogs(allProgress);
+      }
+    } catch (err) {
+      console.error("Failed to fetch retailer progress", err);
+    }
   };
 
+  /* ================= OPEN HANDLER ================= */
+
+  const onOpenChange = (val: boolean) => {
+    setOpen(val);
+    if (val) {
+      fetchOrderDates();
+      fetchRetailerProgress();
+    }
+  };
+
+  /* ================= SUBMIT ================= */
+
+  const statusUpdate = async (data: any) => {
+    try {
+      const res = await statusChange({ status: data.status });
+
+      if (!res.success) {
+        toast.error(res.msg || "Failed to update status");
+        return;
+      }
+
+      toast.success("Order Status Updated");
+      router.refresh();
+      setOpen(false);
+    } catch {
+      toast.error("Error while updating order status");
+    }
+  };
+
+  /* ================= VISIBILITY RULES ================= */
+
+  const canShowReadyToDelivery =
+    orderData.orderStatus === "Ready To Delivery";
+
+  const canShowShipped =
+    orderData.orderStatus === "Ready To Delivery" ||
+    orderData.orderStatus === "Shipped";
+
+  /* ================= FINAL STATUS ARRAY (🔥 MAIN LOGIC) ================= */
+
+  const orderStatusArray = Object.entries(OrderStatus)
+    .filter(([_, label]) => {
+      if (
+        label.toLowerCase() === "ready to delivery" &&
+        !canShowReadyToDelivery
+      ) return false;
+
+      if (label === "Shipped" && !canShowShipped) return false;
+
+      return true;
+    })
+    .map(([key, label]) => {
+      const dbField = statusToDateField[label];
+
+      const date =
+        (dbField && datesOfStatus[dbField]) ??
+        progressLogs
+          .filter(
+            (p) => (p.stage || p.status) === label
+          )
+          .slice(-1)[0]
+          ?.createdAt ??
+        null;
+
+      return {
+        value: key,
+        label,
+        date,
+      };
+    });
+
+  /* ================= UI ================= */
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <div className="flex w-full justify-between gap-2" onClick={orderDates}>
-          <div>{orderData.orderStatus}</div>
-          {/* <Edit /> */}
+        <div className="flex w-full cursor-pointer justify-between">
+          {orderData.orderStatus}
         </div>
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Order Status</DialogTitle>
           <DialogDescription>
-            Update Order Status for order: {orderData.purchaeOrderNo}
+            Order No: <strong>{orderData.purchaeOrderNo}</strong>
           </DialogDescription>
         </DialogHeader>
 
-        <Form {...updateForm}>
-          <form onSubmit={updateForm.handleSubmit(statusUpdate)}>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(statusUpdate)}>
             <FormField
-              control={updateForm.control}
+              control={form.control}
               name="status"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Order Status</FormLabel>
+
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select the type of this order" />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                     </FormControl>
+
                     <SelectContent>
-                      {orderStatusArray.map((status: any) => {
-                        return (
-<SelectItem value={status.value} key={status.value}>
-                            <div className="flex w-[350px] justify-between">
-                              {status.label}{" "}
-                              {status.date && (
-                                <span className="text-nowrap text-end">
-                                  {dayjs(status.date).format("DD MMM YYYY")}
-                                </span>
-                              )}
-                            </div>
-                          </SelectItem>
-                        );
-                      })}
+                      {orderStatusArray.map((status) => (
+                        <SelectItem
+                          key={status.value}
+                          value={status.value}
+                        >
+                          <div className="flex w-[350px] justify-between">
+                            <span>{status.label}</span>
+                            {status.date && (
+                              <span className="text-gray-500">
+                                {dayjs(status.date).format("DD MMM YYYY")}
+                              </span>
+                            )}
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" className={"mt-4 w-full"} loading={loading}>
+            <Button type="submit" loading={loading} className="mt-4 w-full">
               Update
             </Button>
           </form>

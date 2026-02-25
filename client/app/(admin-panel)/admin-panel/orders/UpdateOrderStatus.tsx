@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { getOrderStatusDatesStockDetails } from "@/lib/data";
 import dayjs from "dayjs";
+import { API_URL } from "@/lib/constants";
 
 interface StatusDateTypes {
   pattern: string | null;
@@ -45,24 +46,33 @@ interface StatusDateTypes {
   beading: string | null;
   zarkan: string | null;
   stitching: string | null;
+  balance_pending: string | null;   // ✅ ADD THIS
   ready_to_delivery: string | null;
   shipped: string | null;
 }
+interface ProgressLog {
+  stage?: string;
+  status?: string;
+  createdAt: string;
+}
 
-const statusFieldMap: Record<string, string | null> = {
+
+const statusFieldMap: Record<string, keyof StatusDateTypes | null> = {
   "Pattern": "pattern",
   "Khaka": "khaka",
   "Issue Beading": "issue_beading",
   "Beading": "beading",
   "Zarkan": "zarkan",
   "Stitching": "stitching",
-  "Balance Pending": null,
+  "Balance Pending": "balance_pending", // 🔥 FIX
   "Ready to Delivery": "ready_to_delivery",
   "Shipped": "shipped",
 };
 
+
 const UpdateOrderStatus = ({ orderData }: { orderData: any }) => {
   const [open, setOpen] = useState(false);
+const [storeProgress, setStoreProgress] = useState<ProgressLog[]>([]);
 
   const [datesOfStatus, setDatesOfStatus] = useState<StatusDateTypes>({
     pattern: null,
@@ -71,6 +81,7 @@ const UpdateOrderStatus = ({ orderData }: { orderData: any }) => {
     beading: null,
     zarkan: null,
     stitching: null,
+    balance_pending: null,   
     ready_to_delivery: null,
     shipped: null,
   });
@@ -86,18 +97,42 @@ const UpdateOrderStatus = ({ orderData }: { orderData: any }) => {
   const router = useRouter();
 
   const fetchOrderDates = async () => {
-    try {
-      const res = await getOrderStatusDatesStockDetails(orderData.id);
-      if (res?.data) setDatesOfStatus(res.data);
-    } catch (err) {
-      console.log("Error fetching status dates:", err);
+  try {
+    const res = await getOrderStatusDatesStockDetails(orderData.id);
+    if (res?.data) {
+      setDatesOfStatus(res.data);
     }
-  };
+  } catch (err) {
+    console.error("Failed to fetch order status dates", err);
+  }
+};
 
-  const onOpenChange = (val: boolean) => {
-    setOpen(val);
-    if (val) fetchOrderDates();
-  };
+
+const fetchStoreProgress = async () => {
+  try {
+    const res = await fetch(
+      `${API_URL}/orders/store-status/report/${orderData.id}`
+    );
+    const json = await res.json();
+
+    if (json.success && json.data?.length) {
+      // sab styles ka progress merge kar do
+      const allProgress = json.data.flatMap((s: any) => s.progress || []);
+      setStoreProgress(allProgress);
+    }
+  } catch (err) {
+    console.error("Failed to fetch store progress", err);
+  }
+};
+
+
+const onOpenChange = (val: boolean) => {
+  setOpen(val);
+  if (val) {
+    fetchOrderDates();     // existing
+    fetchStoreProgress(); // 🔥 NEW
+  }
+};
 
   const onSubmit = async (values: UpdateOrderStatusForm) => {
     try {
@@ -118,15 +153,23 @@ const UpdateOrderStatus = ({ orderData }: { orderData: any }) => {
       toast.error("Error updating status");
     }
   };
+const orderStatusArray = Object.values(OrderStatus).map((statusLabel) => {
+  const dbField = statusFieldMap[statusLabel];
 
-  const orderStatusArray = Object.values(OrderStatus).map((statusLabel) => {
-    const dbField = statusFieldMap[statusLabel];
-    return {
-      label: statusLabel,
-      value: statusLabel,
-      date: dbField ? datesOfStatus[dbField as keyof StatusDateTypes] : null,
-    };
-  });
+  const date =
+    (dbField && datesOfStatus[dbField]) ??
+    storeProgress
+.filter((p: any) => (p.stage || p.status) === statusLabel)
+      .slice(-1)[0]
+      ?.createdAt ??
+    null;
+
+  return {
+    label: statusLabel,
+    value: statusLabel,
+    date,
+  };
+});
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -15,6 +15,8 @@ import { imageCache, productCache } from "../lib/cache.service";
 import db from "../db";
 import { RetailerOrder } from "../models/RetailerOrder";
 import { createStyleBarcode } from "../services/style.service";
+import { updateOrderByBarcode } from "../services/orderStatus.service";
+
 import StoreStyleProgress from "../models/StoreStyleProgress";  // ⬅ top me import add karna
 // import { updateOrderAndStyleStatus } from "../services/orderStatus.service";
 
@@ -912,22 +914,52 @@ router.put(
   asyncHandler(async (req: Request, res: Response) => {
     const { barcode, status } = req.body;
 
-    if (!barcode) {
+    if (!barcode || !status) {
       return res.status(400).json({
         success: false,
-        message: "Barcode required",
+        message: "Barcode and status required",
       });
     }
 
-    // await updateOrderAndStyleStatus(barcode, status);
+    // 1️⃣ Validate style + order (sirf check ke liye)
+    const style = await Style.findOne({
+      where: { barcode },
+      relations: ["order"],
+    });
 
-    res.json({
+    if (!style) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid barcode",
+      });
+    }
+
+    const order = style.order;
+
+    // 2️⃣ BLOCK SHIP IF BALANCE PENDING
+    if (
+      status === OrderStatus.Shipped &&
+      order.orderStatus === OrderStatus.Balance_Pending
+    ) {
+      return res.json({
+        success: false,
+        message: "Balance pending. Cannot ship order.",
+      });
+    }
+
+    // 3️⃣ 🔥 SINGLE SOURCE OF TRUTH (ADMIN ACTION)
+    await updateOrderByBarcode(
+      barcode,
+      status,
+      0 // qty = 0 → admin/manual update
+    );
+
+    return res.json({
       success: true,
-      message: "Order status updated successfully",
+      message: `Order moved to ${status}`,
     });
   })
 );
-
 
 
 
@@ -1197,58 +1229,74 @@ PublicStoreRoutes.post(
     const { barcode } = req.body;
 
     if (!barcode) {
-      return res.json({ success: false, message: "Barcode required" });
+      return res.json({
+        success: false,
+        message: "Barcode required",
+      });
     }
 
-    // 1️⃣ Find style
+    // 1️⃣ Find style + order (sirf validation ke liye)
     const style = await Style.findOne({
       where: { barcode },
       relations: ["order"],
     });
 
     if (!style) {
-      return res.json({ success: false, message: "Invalid barcode" });
+      return res.json({
+        success: false,
+        message: "Invalid barcode",
+      });
     }
 
     const order = style.order;
 
-    // 2️⃣ Last stage
-    const last = await StoreStyleProgress.findOne({
+    // 2️⃣ Last progress
+    const lastProgress = await StoreStyleProgress.findOne({
       where: { barcode },
       order: { createdAt: "DESC" },
     });
 
-    const currentStage = last?.status || null;
+ const currentStage: OrderStatus | null =
+  lastProgress?.status
+    ? (lastProgress.status as OrderStatus)
+    : null;
+
+
     const nextStage = getNextStatus(currentStage);
 
-    // ❌ same stage again block
-    if (last && last.status === nextStage) {
+    // 🔒 STORE cannot mark Ready To Delivery
+    if (nextStage === OrderStatus.Ready_To_Delivery) {
+      return res.json({
+        success: false,
+        message: "Ready To Delivery can be done only by Admin",
+      });
+    }
+
+    // 🔒 BLOCK SHIP IF BALANCE PENDING
+    if (
+      nextStage === OrderStatus.Shipped &&
+      order.orderStatus === OrderStatus.Balance_Pending
+    ) {
+      return res.json({
+        success: false,
+        message: "Balance pending. Cannot ship order.",
+      });
+    }
+
+    // ❌ same stage again
+    if (currentStage === nextStage) {
       return res.json({
         success: false,
         message: `Already at ${nextStage}`,
       });
     }
 
-    // 3️⃣ Insert progress (FIXED qty = 1)
-    const progress = new StoreStyleProgress();
-    progress.barcode = barcode;
-    progress.status = nextStage;
-    progress.qty = 1;
-    await progress.save();
-
-    // 4️⃣ Update order (NO quantity logic)
-    const now = new Date();
-    order.orderStatus = nextStage as any;
-
-    const field = nextStage.toLowerCase().replace(/\s+/g, "_");
-    (order as any)[field] = now;
-
-    if (nextStage === "Shipped") {
-      order.shippingStatus = ShippingStatus.Shipped;
-      order.shippingDate = now;
-    }
-
-    await order.save();
+    // 3️⃣ 🔥 SINGLE SOURCE OF TRUTH
+    await updateOrderByBarcode(
+      barcode,
+      nextStage,
+      1 // qty = 1 → store scan
+    );
 
     return res.json({
       success: true,
@@ -1267,23 +1315,31 @@ PublicStoreRoutes.post(
 
 
 
+
+
 const STORE_STATUS_FLOW = [
-  "Pattern",
-  "Khaka",
-  "Issue Beading",
-  "Beading",
-  "Zarkan",
-  "Stitching",
-  "Balance Pending",
-  "Ready To Delivery",
-  "Shipped",
+  OrderStatus.Pattern,
+  OrderStatus.Khaka,
+  OrderStatus.Issue_Beading,
+  OrderStatus.Beading,
+  OrderStatus.Zarkan,
+  OrderStatus.Stitching,
+  OrderStatus.Balance_Pending,
+  OrderStatus.Shipped,
 ];
 
-function getNextStatus(current: string | null): string {
+
+function getNextStatus(current: OrderStatus | null): OrderStatus {
   if (!current) return STORE_STATUS_FLOW[0];
+
+  // 🔒 admin ke baad store sirf ship kare
+  if (current === OrderStatus.Ready_To_Delivery)
+    return OrderStatus.Shipped;
+
   const index = STORE_STATUS_FLOW.indexOf(current);
   return STORE_STATUS_FLOW[index + 1] || current;
 }
+
 
 
 PublicStoreRoutes.get(
@@ -1424,4 +1480,53 @@ router.get(
   })
 );
 
+
+router.put(
+  "/mark-ready",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { orderId } = req.body;
+
+    if (!orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "Order ID required",
+      });
+    }
+
+    // 1️⃣ Find order with styles
+    const order = await Order.findOne({
+      where: { id: orderId },
+      relations: ["styles"],
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // 2️⃣ Already Ready?
+    if (order.orderStatus === OrderStatus.Ready_To_Delivery) {
+      return res.json({
+        success: false,
+        message: "Order already Ready To Delivery",
+      });
+    }
+
+    // 3️⃣ 🔥 ADMIN ACTION — SAME ENGINE AS STORE SCAN
+    for (const style of order.styles) {
+      await updateOrderByBarcode(
+        style.barcode,
+        OrderStatus.Ready_To_Delivery,
+        0 // qty = 0 → admin action
+      );
+    }
+
+    return res.json({
+      success: true,
+      message: "Order marked Ready To Delivery",
+    });
+  })
+);
 

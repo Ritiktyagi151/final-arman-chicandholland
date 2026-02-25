@@ -7,135 +7,74 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 
-/* ================= COLOR MASTER (DB MIRROR) ================= */
+/* ======================================================
+   MESH COLOR FORMATTER
+   Input  : "SAS(Aquamarine Jewel)"
+   Output :
+     SAS
+     Aquamarine
+     Jewel
+====================================================== */
+const formatMeshColor = (meshColor?: string): string[] => {
+  if (!meshColor) return ["UNKNOWN"];
 
-const PRODUCT_COLORS: Record<string, string> = {
-  "#FFF5EE": "Seashell",
-  "#00FF00": "Green",
-  "#FF7F50": "Coral",
-  "#7FFFD4": "Aquamarine Jewel",
-  "#BF8678": "224 - Dusty Rose",
-  "#C49054": "904 - Gold",
-  "#AF958A": "724 - Dusty Lavender",
-  "#EDEDED": "906 - Ivory",
-  "#A2AD48": "15 - Wasabi",
-  "#A28871": "134D - Smoke Nude",
-  "#000000": "908 - Black",
-  "#B9B4B1": "885 - Grey",
-  "#101938": "843 - Navy",
-  "#DBD9D7": "32LL - Ultra Silver",
-  "#603A37": "826 - Midnight Aubergine",
-  "#D5B086": "901 - Nude",
-  "#07180E": "30G - Forest Green",
-  "#A69991": "252D - Smoke Grey",
-  "#6F000F": "26 - Blood Red",
-  "#8DA7BF": "121 - Steel Blue",
-  "#DFBFBF": "28P - Baby Pink",
-  "#BE9782": "709 - Pastel Rose",
-  "#DF7292": "194 - Candy Pink",
-  "#CC199D": "912 - Fuschia",
-  "#B69CA7": "29D - Pastel Lilac",
-  "#AA7BB7": "31 - Light Purple",
-  "#3D1551": "42D - Midnight Purple",
-  "#7F8EC7": "729 - Winkel",
-  "#0E1565": "352 - Royal Blue",
-  "#9EC201": "911 - Leaf Green",
-  "#003A44": "395 - Teal",
-  "#B3BFC1": "63L - Metallic Blue",
-  "#D47013": "914 - Orange",
-  "#D6D6D6": "Silver",
-  "#B87D75": "719 - Salmon",
-  "#E2A3B3": "215 - Raspberry Pink",
-  "#C3A9C8": "28L - Bright Lavender",
-  "#A78E91": "773 - Spicy Mauve",
-  "#803900": "902 - DARK FAWN",
-  "#B47350": "917 - LIGHT FAWN",
-  "#174F03": "907 - EMERALD GREEN",
-  "#F7F7F7": "101 - LUSTER WHITE",
-  "#695D5D": "GUNMETAL",
-  "#FBF4F4": "Silver - Luster",
-  "#BDA8A8": "903 - Blush",
-  "#B30F0F": "26B - Bead Red",
-  "#061946": "31N - NAVY",
-  "#EBEBEB": "932LL - SILVER",
-  "#6F667F": "GREY",
-  "#9A8484": "BLUSH/GREY",
-  "#4CD4DD": "AQUA",
-  "#2C5387": "mix",
-  "#944C4C": "900 - Mocha",
-  "#4682B4": "Steel Blue",
-};
+  const match = meshColor.match(/^(\w+)\((.+)\)$/);
 
-/* ================= COLOR RESOLVER ================= */
-
-const resolveColor = (color?: string) => {
-  if (!color) {
-    return { name: "UNKNOWN COLOR", hex: "#FFFFFF" };
+  if (!match) {
+    return [meshColor];
   }
 
-  // If hex code
-  if (color.startsWith("#")) {
-    return {
-      name: PRODUCT_COLORS[color.toUpperCase()] || "UNKNOWN COLOR",
-      hex: color,
-    };
-  }
+  const prefix = match[1]; // SAS
+  const name = match[2];   // Aquamarine Jewel
 
-  // If already color name
-  return {
-    name: color,
-    hex: "#FFFFFF",
-  };
+  return [prefix, ...name.split(" ")];
 };
 
-/* ================= PDF LABEL ================= */
-
-export default function LabelPdf1({ item }: { item: any }) {
-  const { name: colorName, hex: colorHex } = resolveColor(item.color);
+/* ======================================================
+   PDF LABEL
+====================================================== */
+export default function LabelPdf({ item }: { item: any }) {
+  const colorLines = formatMeshColor(item.meshColor || item.color);
 
   return (
     <Document>
       <Page size={[125, 130]} style={styles.page}>
         <View style={styles.container}>
 
-          {/* STYLE NO */}
+          {/* ================= HEADER ================= */}
           <View style={styles.header}>
             <Text style={styles.headerText}>{item.styleNo}</Text>
           </View>
 
-          {/* SIZE + COLOR */}
+          {/* ================= SIZE + COLOR ================= */}
           <View style={styles.row}>
 
             {/* SIZE */}
             <View style={styles.box}>
-              <Text style={styles.value}>
-                EU {item.size}{item.quantity}
+              <Text style={styles.sizeText}>
+                EU {item.size}/{item.quantity}
               </Text>
             </View>
 
-            {/* COLOR */}
-            <View style={styles.box}>
-              <View style={styles.colorRow}>
-                <View
-                  style={[
-                    styles.colorSwatch,
-                    { backgroundColor: item.color?.startsWith("#") ? colorHex : "#FFFFFF" },
-                  ]}
-                />
-                <Text style={styles.colorName}>
-                  {colorName}
+            {/* COLOR (MESH COLOR – CLEAN FORMAT) */}
+            <View style={[styles.box, styles.colorBox]}>
+              {colorLines.map((line, index) => (
+                <Text key={index} style={styles.colorText}>
+                  {line}
                 </Text>
-              </View>
+              ))}
             </View>
 
           </View>
 
-          {/* PO */}
+          {/* ================= PURCHASE ORDER ================= */}
           <View style={styles.poBlock}>
-            <Text style={styles.poText}>{item.purchaseOrderNo}</Text>
+            <Text style={styles.poText}>
+              {item.purchaseOrderNo}
+            </Text>
           </View>
 
-          {/* BARCODE */}
+          {/* ================= BARCODE ================= */}
           {item.barcode && (
             <View style={styles.barcodeBlock}>
               <Text style={styles.scanText}>SCAN</Text>
@@ -148,7 +87,7 @@ export default function LabelPdf1({ item }: { item: any }) {
             </View>
           )}
 
-          {/* FOOTER */}
+          {/* ================= FOOTER ================= */}
           <View style={styles.footer}>
             <Text>Chic&Holland</Text>
             <Text>
@@ -166,21 +105,23 @@ export default function LabelPdf1({ item }: { item: any }) {
   );
 }
 
-/* ================= STYLES ================= */
-
+/* ======================================================
+   STYLES (POLISHED & BALANCED)
+====================================================== */
 const styles = StyleSheet.create({
   page: {
-    padding: 0,
     backgroundColor: "#FFFFFF",
+    padding: 0,
   },
 
   container: {
-    border: "1px solid #000000",
     height: "100%",
+    border: "1px solid #000000",
   },
 
+  /* HEADER */
   header: {
-    paddingVertical: 2,
+    paddingVertical: 3,
     alignItems: "center",
   },
   headerText: {
@@ -188,76 +129,78 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
+  /* ROW */
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 6,
     paddingHorizontal: 4,
+    paddingVertical: 6,
   },
 
   box: {
     width: "48%",
     border: "1px solid #000000",
-    padding: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 2,
+    alignItems: "center",
     justifyContent: "center",
   },
 
-  value: {
+  /* SIZE */
+  sizeText: {
     fontSize: 9,
     fontWeight: "bold",
     textAlign: "center",
   },
 
   /* COLOR */
-  colorRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  colorSwatch: {
-    width: 10,
-    height: 10,
-    border: "1px solid #000000",
-    marginRight: 4,
-  },
-  colorName: {
-    fontSize: 4,
-    fontWeight: "bold",
+  colorBox: {
+    justifyContent: "center",
   },
 
+  colorText: {
+    fontSize: 6.5,     // 👈 perfect readability
+    fontWeight: "bold",
+    textAlign: "center",
+    lineHeight: 1.2,
+  },
+
+  /* PO */
   poBlock: {
     marginHorizontal: 6,
     marginBottom: 6,
     border: "1px solid #000000",
-    padding: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 2,
     alignItems: "center",
   },
-
   poText: {
     fontSize: 8,
     fontWeight: "bold",
+    textAlign: "center",
   },
 
+  /* BARCODE */
   barcodeBlock: {
     alignItems: "center",
     marginBottom: 6,
   },
-
   scanText: {
     fontSize: 6,
     marginBottom: 2,
     fontWeight: "bold",
   },
-
   barcode: {
     width: 120,
     height: 32,
   },
 
+  /* FOOTER */
   footer: {
-    fontSize: 6,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 3,
     paddingHorizontal: 4,
+    paddingVertical: 3,
+    fontSize: 6,
   },
 });

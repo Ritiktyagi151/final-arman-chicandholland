@@ -25,7 +25,7 @@ const db = new DataSource({
     dropSchema: false,
 
     // Entities ka path correct kar diya gaya hai
-    entities: [modelsPath],
+  entities: [path.join(process.cwd(), "src/models/*.{ts,js}")],
     poolSize: CONFIG.DB_POOL_SIZE,
     
     // Debugging ke liye logging enable kar sakte hain agar zaroorat ho

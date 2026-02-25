@@ -1,118 +1,64 @@
-// import Order, { OrderStatus, ShippingStatus } from "../models/Order";
-// import Style from "../models/OrderStyle";
-// import StoreStyleProgress from "../models/StoreStyleProgress";
+import Order, { OrderStatus, ShippingStatus } from "../models/Order";
+import Style from "../models/OrderStyle";
+import StoreStyleProgress from "../models/StoreStyleProgress";
 
-// export async function updateOrderAndStyleStatus(
-//   barcode: string,
-//   status: string,
-//   qty: number | null = null
-// ) {
-//   // --------------------------------------
-//   // 1️⃣ Find style and linked order
-//   // --------------------------------------
-//   const style = await Style.findOne({
-//     where: { barcode },
-//     relations: ["order"],
-//   });
+const STATUS_FIELD_MAP: Record<OrderStatus, keyof Order> = {
+  [OrderStatus.Pattern]: "pattern",
+  [OrderStatus.Khaka]: "khaka",
+  [OrderStatus.Issue_Beading]: "issue_beading",
+  [OrderStatus.Beading]: "beading",
+  [OrderStatus.Zarkan]: "zarkan",
+  [OrderStatus.Stitching]: "stitching",
+  [OrderStatus.Balance_Pending]: "balance_pending",
+  [OrderStatus.Ready_To_Delivery]: "ready_to_delivery",
+  [OrderStatus.Shipped]: "shipped",
+};
 
-//   if (!style) throw new Error("Invalid barcode");
+export async function updateOrderByBarcode(
+  barcode: string,
+  nextStatus: OrderStatus,
+  qty: number
+) {
+  const style = await Style.findOne({
+    where: { barcode },
+    relations: ["order"],
+  });
 
-//   const order = style.order;
-//   const now = new Date();
+  if (!style) throw new Error("Invalid barcode");
 
-//   // --------------------------------------
-//   // 2️⃣ Update Style
-//   // --------------------------------------
-//   style.currentStatus = status;
-//   await style.save();
+  const order = style.order;
+  const now = new Date();
 
-//   // --------------------------------------
-//   // 3️⃣ Add Progress (if qty provided)
-//   // --------------------------------------
-//   if (qty) {
-//     await StoreStyleProgress.create({
-//       barcode,
-//       status,
-//       qty,
-//     }).save();
-//   }
+  // 🔒 BLOCK SHIP IF BALANCE PENDING
+  if (
+    nextStatus === OrderStatus.Shipped &&
+    order.orderStatus === OrderStatus.Balance_Pending
+  ) {
+    throw new Error("Balance pending. Cannot ship order.");
+  }
 
-//   // --------------------------------------
-//   // 4️⃣ Update Order Main Status (REAL FIX)
-//   // --------------------------------------
-//   if (Object.values(OrderStatus).includes(status as any)) {
-//     order.orderStatus = status as OrderStatus;
-//   } else {
-//     // fallback, prevents ENUM mismatch
-//     order.orderStatus = status as any;
-//   }
+  // 1️⃣ PROGRESS ENTRY
+  const progress = new StoreStyleProgress();
+  progress.barcode = barcode;
+  progress.status = nextStatus;
+  progress.qty = qty;
+  await progress.save();
 
-//   // --------------------------------------
-//   // 5️⃣ Auto timestamp update by stage
-//   // --------------------------------------
-//   switch (status) {
-//     case "Pattern":
-//       order.pattern = now;
-//       break;
+  // 2️⃣ ORDER STATUS
+  order.orderStatus = nextStatus;
 
-//     case "Khaka":
-//       if (!order.pattern) order.pattern = now;
-//       order.khaka = now;
-//       break;
+  // 3️⃣ 🔥 ALWAYS SET DATE
+  const field = STATUS_FIELD_MAP[nextStatus];
+  if (field) {
+    (order[field] as any) = now;
+  }
 
-//     case "Issue Beading":
-//       order.issue_beading = now;
-//       break;
+  // 4️⃣ SHIPPING INFO
+  if (nextStatus === OrderStatus.Shipped) {
+    order.shippingStatus = ShippingStatus.Shipped;
+    order.shippingDate = now;
+  }
 
-//     case "Beading":
-//       order.beading = now;
-//       break;
+  await order.save();
+}
 
-//     case "Zarkan":
-//       order.zarkan = now;
-//       break;
-
-//     case "Stitching":
-//       order.stitching = now;
-//       break;
-
-//     case "Ready To Delivery":
-//       order.ready_to_delivery = now;
-//       break;
-
-//     case "Shipped":
-//       order.shipped = now;
-//       order.shippingDate = now;
-//       order.shippingStatus = ShippingStatus.Shipped;
-//       break;
-//   }
-
-//   // --------------------------------------
-//   // 6️⃣ SAVE ORDER (REAL GUARANTEED COMMIT)
-//   // --------------------------------------
-//   await Order.update(order.id, {
-//     orderStatus: order.orderStatus,
-//     pattern: order.pattern,
-//     khaka: order.khaka,
-//     issue_beading: order.issue_beading,
-//     beading: order.beading,
-//     zarkan: order.zarkan,
-//     stitching: order.stitching,
-//     ready_to_delivery: order.ready_to_delivery,
-//     shipped: order.shipped,
-//     shippingDate: order.shippingDate,
-//     shippingStatus: order.shippingStatus,
-//   });
-
-//   console.log(
-//     "🔥 ORDER STATUS UPDATED →",
-//     "OrderID:",
-//     order.id,
-//     "Barcode:",
-//     barcode,
-//     "→",
-//     order.orderStatus
-//   );
-
-//   return { order, style };
-// }

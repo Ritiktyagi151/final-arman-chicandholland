@@ -1614,51 +1614,45 @@ router.post(
     if (!order)
       return res.json({ success: false, msg: "Order Not Found" });
 
-    /* ------------------------------------------
-       🔥 PAYMENT VALIDATION BEFORE STATUS UPDATE
-    ------------------------------------------ */
-    const payments = await RetailerOrdersPayment.find({
-      where: { order: { id: order.id } },
-    });
+    // /* ------------------------------------------
+    //    🔥 PAYMENT VALIDATION BEFORE STATUS UPDATE
+    // ------------------------------------------ */
+    // const payments = await RetailerOrdersPayment.find({
+    //   where: { order: { id: order.id } },
+    // });
 
-    const paidAmount = payments.reduce(
-      (sum, p) => sum + Number(p.amount || 0),
-      0
-    );
+    // const paidAmount = payments.reduce(
+    //   (sum, p) => sum + Number(p.amount || 0),
+    //   0
+    // );
 
-    const remaining = Number(order.purchaseAmount) - paidAmount;
+    // const remaining = Number(order.purchaseAmount) - paidAmount;
 
-    if (
-      order.orderStatus === OrderStatus.Balance_Pending &&
-      status !== OrderStatus.Balance_Pending &&
-      remaining > 0
-    ) {
-      return res.json({
-        success: false,
-        msg: "Cannot move forward! Payment still pending.",
-        remaining,
-      });
-    }
+    // if (
+    //   order.orderStatus === OrderStatus.Balance_Pending &&
+    //   status !== OrderStatus.Balance_Pending &&
+    //   remaining > 0
+    // ) {
+    //   return res.json({
+    //     success: false,
+    //     msg: "Cannot move forward! Payment still pending.",
+    //     remaining,
+    //   });
+    // }
 
-    if (
-      order.orderStatus === OrderStatus.Ready_To_Delivery &&
-      status === OrderStatus.Shipped &&
-      remaining > 0
-    ) {
-      return res.json({
-        success: false,
-        msg: "Payment pending! Cannot mark as Shipped.",
-        remaining,
-      });
-    }
+    // if (
+    //   order.orderStatus === OrderStatus.Ready_To_Delivery &&
+    //   status === OrderStatus.Shipped &&
+    //   remaining > 0
+    // ) {
+    //   return res.json({
+    //     success: false,
+    //     msg: "Payment pending! Cannot mark as Shipped.",
+    //     remaining,
+    //   });
+    // }
 
-    if (status === OrderStatus.Ready_To_Delivery && remaining > 0) {
-      return res.json({
-        success: false,
-        msg: "Payment pending! Ready To Delivery not allowed.",
-        remaining,
-      });
-    }
+   
 
     /* ------------------------------------------
        ⭐ LOWEST STAGE VALIDATION (manual cannot jump)
@@ -1682,7 +1676,7 @@ finalStatus = finalStatus.replace(/([a-z])([A-Z])/g, "$1 $2");
 
 console.log("Converted finalStatus:", finalStatus);
 
-order.orderStatus = finalStatus;
+order.orderStatus = finalStatus as OrderStatus;
 
 
     switch (status) {
@@ -2156,20 +2150,75 @@ router.put(
       });
     }
 
-    const workflow = [
-      OrderStatus.Pattern,
-      OrderStatus.Khaka,
-      OrderStatus.Issue_Beading,
-      OrderStatus.Beading,
-      OrderStatus.Zarkan,
-      OrderStatus.Stitching,
-      OrderStatus.Balance_Pending,
-      OrderStatus.Ready_To_Delivery,
-      OrderStatus.Shipped,
-    ];
+  const workflow = [
+  OrderStatus.Pattern,
+  OrderStatus.Khaka,
+  OrderStatus.Issue_Beading,
+  OrderStatus.Beading,
+  OrderStatus.Zarkan,
+  OrderStatus.Stitching,
+  OrderStatus.Balance_Pending,
+];
+
+const currentStatus: OrderStatus = order.orderStatus as OrderStatus;
 
     const currentIndex = workflow.indexOf(order.orderStatus);
     const now = new Date();
+// ⛔ QR STOP — Balance Pending
+if (currentStatus === OrderStatus.Balance_Pending) {
+  return res.json({
+    success: false,
+    code: "WAIT_ADMIN",
+    message:
+      "Order Balance Pending hai. Admin ne Ready To Delivery nahi kiya.",
+    nextAction: "WAIT_ADMIN_READY",
+  });
+}
+
+// 🟡 Admin Ready To Delivery kar chuka hai
+if (currentStatus === OrderStatus.Ready_To_Delivery) {
+  return res.json({
+    success: true,
+    code: "READY_FOR_SHIP",
+    message:
+      "Admin ne Ready To Delivery kar diya hai. Last scan karke Shipped karein.",
+    nextAction: "SHIP",
+  });
+}
+
+// ❌ Already shipped
+if (order.orderStatus === OrderStatus.Shipped) {
+  return res.json({
+    success: false,
+    message: "Order already shipped",
+  });
+}
+
+// 🚚 FINAL QR CONFIRM → SHIP ORDER
+if (
+  order.orderStatus === OrderStatus.Ready_To_Delivery &&
+  req.body.confirmShip === true
+) {
+  const now = new Date();
+
+  order.orderStatus = OrderStatus.Shipped;
+  order.shipped = now;
+  order.shippingStatus = ShippingStatus.Shipped;
+  order.shippingDate = now;
+  order.status_id = 1;
+
+  await order.save();
+
+  return res.json({
+    success: true,
+    code: "SHIPPED",
+    message: "Order shipped successfully",
+    orderStatus: OrderStatus.Shipped,
+    shippedAt: now,
+  });
+}
+
+
 
     if (currentIndex < 0) {
       return res.status(400).json({
@@ -2186,9 +2235,8 @@ router.put(
       });
     }
 
-    const nextStatus = workflow[currentIndex + 1];
+   const nextStatus = workflow[currentIndex + 1];
 
-    order.orderStatus = nextStatus;
 
     const field = nextStatus.toLowerCase().replace(/\s+/g, "_");
     (order as any)[field] = now;
