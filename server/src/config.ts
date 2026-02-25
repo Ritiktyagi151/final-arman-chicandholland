@@ -12,7 +12,7 @@ dotenv.config();
 const CONFIG = {
   HOST: process.env.HOST || "http://localhost:5001",
   PORT: process.env.PORT || 5001,
-  PRODUCTION: process.env.NODE_ENV === "production",
+  PRODUCTION:"production",
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
   // Updated to 127.0.0.1 for more stable connection on Ubuntu
   DB_URL: process.env.DB_URL || "mysql://root:jaikvik@127.0.0.1:3306/chickholland",

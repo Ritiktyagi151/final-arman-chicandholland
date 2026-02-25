@@ -6,30 +6,33 @@ let modelsPath = "";
 
 /**
  * Path handling for entities
- * __dirname use karne se ye current folder (dist ya src) ke mutabik models dhoondega
+ * CONFIG.PRODUCTION ke base par correct directory select karega
  */
 if (CONFIG.PRODUCTION) {
-    // Production mein: dist/models/*.js
+    // Production mein: dist/models/*.js ko load karega
+    // __dirname yahan 'dist' folder ko point karega
     modelsPath = path.join(__dirname, "models", "*.js");
 } else {
-    // Development mein: src/models/*.ts
+    // Development mein: src/models/*.ts ko load karega
     modelsPath = path.join(__dirname, "models", "*.ts");
 }
 
 const db = new DataSource({
     type: "mysql",
+    // Agar ECONNREFUSED aa raha hai, to .env mein 'localhost' ki jagah '127.0.0.1' use karein
     url: CONFIG.DB_URL,
 
-    // Production mein ise hamesha false rakhein
+    // Production mein ise hamesha false rakhein taaki data loss na ho
     synchronize: false,
     dropSchema: false,
 
-    // Entities ka path correct kar diya gaya hai
-  entities: [path.join(process.cwd(), "src/models/*.{ts,js}")],
-    poolSize: CONFIG.DB_POOL_SIZE,
+    // Optimized entities path
+    entities: [modelsPath],
     
-    // Debugging ke liye logging enable kar sakte hain agar zaroorat ho
-    logging: CONFIG.PRODUCTION ? false : true,
+    poolSize: CONFIG.DB_POOL_SIZE,
+
+    // Development mein queries print hongi, production mein nahi
+    logging: !CONFIG.PRODUCTION,
 });
 
 export default db;
