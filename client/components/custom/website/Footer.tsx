@@ -13,7 +13,7 @@ export default function Footer() {
           <div className="flex flex-col gap-2 text-center font-adornstoryserif tracking-wider">
             <Link href="/"><p className="text-lg hover:text-red-500   transition-all">HOME</p></Link>
             <Link href="/brand"><p className="text-lg hover:text-red-500  transition-all">BRAND</p></Link>
-            <Link href="/collections"><p className="text-lg hover:text-red-500 transition-all">SHOWS/EVENTS</p></Link>
+            <Link href="/shows-and-events"><p className="text-lg hover:text-red-500 transition-all">SHOWS/EVENTS</p></Link>
           </div>
 
           {/* Column 2 */}

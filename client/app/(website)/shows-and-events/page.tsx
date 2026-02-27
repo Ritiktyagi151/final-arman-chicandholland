@@ -164,7 +164,7 @@ export default function ShowsAndEvents() {
 
         <div className="text-center mt-12">
           <h2 className="text-2xl font-bold text-black mb-2 font-adornstoryserif">Join Us at Our Next Event</h2>
-          <p className="text-black font-brandon text-[18px] max-w-2xl mx-auto mb-6">Experience the latest collections from Chic & Holland at fashion events around the world.</p>
+          <p className="text-black font-mysi text-[18px] max-w-2xl mx-auto mb-6">Experience the latest collections from Chic & Holland at fashion events around the world.</p>
           <button 
             onClick={openModal}
             className="bg-black text-white px-6 py-3 rounded-md hover:bg-gray-700 transition-colors uppercase tracking-widest text-sm"

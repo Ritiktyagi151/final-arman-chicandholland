@@ -106,7 +106,7 @@ const ContactUs = () => {
         <div className={`text-center mb-16 transition-all duration-1000 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
-          <h1 className="font-adorned text-5xl md:text-7xl text-white mb-6 luxury-title">
+          <h1 className="font-adornstoryserif text-5xl md:text-7xl text-white mb-6 luxury-title">
             Contact Us
           </h1>
           <div className="w-24 h-0.5 bg-primary mx-auto luxury-line"></div>
@@ -184,10 +184,10 @@ const ContactUs = () => {
           {/* Form Section */}
           <div className="luxury-form-section flex-1">
             <div className="form-header mb-8">
-              <h2 className="font-adorned text-3xl md:text-4xl text-white mb-4">
+              <h2 className="font-adornstoryserif text-3xl md:text-4xl text-white mb-4">
                 GET IN TOUCH WITH OUR TEAM
               </h2>
-              <p className="text-gray-300 text-lg">
+              <p className="text-gray-300 font-mysi text-lg">
                 Let's create something extraordinary together. Our team is ready to assist you with any inquiries.
               </p>
             </div>
