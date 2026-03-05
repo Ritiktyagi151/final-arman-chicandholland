@@ -146,7 +146,7 @@ const SearchBar = () => {
         return setSearchData([]);
       }
 
-      await fetch(API_URL + `products/searchStyleNo/?query=${search}`)
+      await fetch(API_URL + `/products/searchStyleNo/?query=${search}`)
         .then((res) => res.json())
         .then((data) => {
           setSearchData(data.products);

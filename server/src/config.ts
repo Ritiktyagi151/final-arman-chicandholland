@@ -15,7 +15,7 @@ const CONFIG = {
   PRODUCTION:"production",
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
   // Updated to 127.0.0.1 for more stable connection on Ubuntu
-  DB_URL: process.env.DB_URL || "mysql://root:jaikvik@127.0.0.1:3306/chickholland",
+  DB_URL: process.env.DB_URL || "mysql://root:@127.0.0.1:3306/chiclocal",
   DB_POOL_SIZE: 10,
   JWT_SECRET: process.env.JWT_SECRET || "krishna_chicandholland",
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1d",
